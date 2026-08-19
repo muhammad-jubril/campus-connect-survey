@@ -4,9 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Campus Connect — Tell Us What You Want</title>
+
+<!-- Favicon: pushpin, drawn inline so no extra file is needed -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23e9e2cf'/%3E%3Ccircle cx='16' cy='15' r='9' fill='%23e8654f'/%3E%3Ccircle cx='16' cy='15' r='9' fill='none' stroke='%23c1432e' stroke-width='1.5'/%3E%3Ccircle cx='13' cy='12' r='2.4' fill='%23ffffff' fill-opacity='0.35'/%3E%3Cpath d='M16 24 L16 30' stroke='%23c1432e' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<!-- Open Graph / social preview. Data-URI images are not reliably fetched by
+     WhatsApp/Twitter/Facebook crawlers — replace og:image and twitter:image
+     with a real hosted URL (e.g. upload public/og-image.png) before sharing
+     the link, or the preview will silently fall back to nothing. -->
+<meta property="og:title" content="Campus Connect — Tell Us What You Want" />
+<meta property="og:description" content="A 2-minute, anonymous survey shaping the student app we're building next. Pin your picks to the board." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="REPLACE-WITH-HOSTED-OG-IMAGE-URL.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Campus Connect — Tell Us What You Want" />
+<meta name="twitter:description" content="A 2-minute, anonymous survey shaping the student app we're building next." />
+<meta name="twitter:image" content="REPLACE-WITH-HOSTED-OG-IMAGE-URL.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#e9e2cf;
@@ -17,6 +34,8 @@
     --marker-dark:#204d36;
     --highlight:#f2c230;
     --stamp:#c1432e;
+    --accent-blue:#3c6e8f;
+    --accent-brown:#8a5a2b;
     --line: rgba(28,27,23,0.16);
     --shadow: 0 10px 24px rgba(28,27,23,0.16);
   }
@@ -30,6 +49,18 @@
     font-family:'Inter',sans-serif;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  /* ---------- paper grain overlay ---------- */
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    z-index:2147483647;
+    pointer-events:none;
+    opacity:0.05;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:180px 180px;
   }
   .mono{font-family:'IBM Plex Mono',monospace;}
   .display{font-family:'Anton',sans-serif; letter-spacing:0.5px; text-transform:uppercase;}
@@ -322,6 +353,92 @@
   .toolbar{display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
   .btn-small{background:var(--ink); color:var(--card); border-radius:6px; padding:9px 14px; font-size:12.5px; font-weight:700;}
   .btn-small.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line);}
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in-view{opacity:1; transform:translateY(0);}
+
+  /* ---------- colored icon badges ---------- */
+  .tag-badge.c0, .pick-tag.c0{color:var(--marker-dark); background:rgba(47,111,78,0.14); border-color:rgba(47,111,78,0.35);}
+  .tag-badge.c1, .pick-tag.c1{color:#7a5c0a; background:rgba(242,194,48,0.28); border-color:rgba(242,194,48,0.55);}
+  .tag-badge.c2, .pick-tag.c2{color:var(--stamp); background:rgba(193,67,46,0.14); border-color:rgba(193,67,46,0.35);}
+  .tag-badge.c3, .pick-tag.c3{color:var(--accent-blue); background:rgba(60,110,143,0.14); border-color:rgba(60,110,143,0.35);}
+  .tag-badge.c4, .pick-tag.c4{color:var(--accent-brown); background:rgba(138,90,43,0.14); border-color:rgba(138,90,43,0.35);}
+
+  /* ---------- sticky notes ---------- */
+  .note-row{display:flex; justify-content:center; margin-top:28px;}
+  .sticky-note{
+    position:relative; max-width:230px; padding:18px 16px 20px;
+    background:#fbe98a; border-radius:2px; box-shadow:var(--shadow);
+    transform:rotate(-3deg); font-family:'Kalam',cursive; font-size:14.5px;
+    line-height:1.42; color:#3a3420;
+  }
+  .sticky-note.alt{transform:rotate(2.5deg); background:#cdeec2;}
+  .sticky-note b{display:block; font-weight:700; margin-bottom:4px; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;}
+  .sticky-note::before{
+    content:''; position:absolute; top:-13px; left:50%; transform:translateX(-50%) rotate(-3deg);
+    width:74px; height:22px;
+    background:repeating-linear-gradient(45deg, rgba(255,255,255,0.65) 0 4px, rgba(255,255,255,0.35) 4px 8px), rgba(255,255,255,0.55);
+    box-shadow:0 2px 3px rgba(0,0,0,0.14);
+  }
+
+  /* ---------- washi tape corners ---------- */
+  .washi{position:absolute; width:86px; height:24px; opacity:0.88; box-shadow:0 1px 2px rgba(0,0,0,0.15); pointer-events:none;}
+  .washi::after{content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg, rgba(255,255,255,0.5) 0 4px, rgba(255,255,255,0.22) 4px 8px);}
+  .washi.tl{top:-13px; left:-24px; transform:rotate(-42deg); background:rgba(242,194,48,0.6);}
+  .washi.tr{top:-13px; right:-24px; transform:rotate(42deg); background:rgba(47,111,78,0.55);}
+
+  /* ---------- torn paper edge (bottom of a card) ---------- */
+  .torn-edge{position:relative;}
+  .torn-edge::after{
+    content:''; position:absolute; left:0; right:0; bottom:-11px; height:22px;
+    background:
+      linear-gradient(135deg, var(--card) 50%, transparent 50%),
+      linear-gradient(-135deg, var(--card) 50%, transparent 50%);
+    background-size:18px 22px; background-repeat:repeat-x; background-position:0 0, 9px 0;
+  }
+
+  /* ---------- thanks card ---------- */
+  .thanks-card{
+    max-width:480px; margin:0 auto; background:var(--card); border-radius:2px;
+    padding:44px 36px 40px; box-shadow:var(--shadow); position:relative; transform:rotate(0.4deg);
+  }
+
+  /* ---------- confetti ---------- */
+  #confetti-layer{position:fixed; inset:0; z-index:9999; pointer-events:none; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-24px; width:8px; height:14px; border-radius:1px; animation-name:confetti-fall; animation-timing-function:cubic-bezier(.4,.1,.6,.9); animation-fill-mode:forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translate(0,0) rotate(0deg); opacity:1;}
+    100%{transform:translate(var(--drift),420px) rotate(var(--rot)); opacity:0;}
+  }
+  .stamp-badge.pop{animation:stamp-check .5s cubic-bezier(.22,1,.36,1);}
+
+  /* ---------- response counter ---------- */
+  .counter-badge{
+    display:inline-flex; align-items:center; gap:7px; margin-top:16px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:0.75;
+  }
+  .counter-dot{width:7px; height:7px; border-radius:50%; background:var(--marker); box-shadow:0 0 0 3px rgba(47,111,78,0.18); animation:dot-pulse 1.8s ease-in-out infinite;}
+  @keyframes dot-pulse{0%,100%{opacity:1;} 50%{opacity:0.4;}}
+
+  /* ---------- skeleton loading ---------- */
+  .skel{position:relative; overflow:hidden; background:rgba(28,27,23,0.08); border-radius:6px;}
+  .skel::after{
+    content:''; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    animation:skel-shimmer 1.3s ease-in-out infinite;
+  }
+  @keyframes skel-shimmer{100%{transform:translateX(100%);}}
+  .skel-stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:34px;}
+  @media(max-width:760px){.skel-stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .skel-stat{height:76px; border-radius:8px;}
+  .skel-panel{height:150px; border-radius:8px; margin-bottom:22px;}
+  .btn-spinner{
+    display:inline-block; width:13px; height:13px; margin-right:8px;
+    border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%;
+    animation:spin .7s linear infinite; vertical-align:-2px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -335,19 +452,27 @@
 <div id="view-landing">
   <div class="hero wrap">
     <div class="corkboard">
-      <div class="flyer">
+      <div class="flyer torn-edge">
+        <div class="washi tl"></div>
+        <div class="washi tr"></div>
         <div class="pushpin"></div>
         <span class="eyebrow">Coming to your campus</span>
         <h1>We're building something <span class="accent">for students.</span></h1>
         <p>A social platform made specifically for students — built around what actually happens on campus. Before we build it, we want to know: what do <em>you</em> want to see in it?</p>
         <button class="tear-cta" onclick="startSurvey()">Take the 2-minute survey <span class="arrow">→</span></button>
         <div class="time-note mono">~2 MINUTES · 100% ANONYMOUS</div>
+        <div class="counter-badge" id="response-counter" style="display:none;">
+          <span class="counter-dot"></span><span id="response-counter-text"></span>
+        </div>
       </div>
+    </div>
+    <div class="note-row">
+      <div class="sticky-note"><b>Tip</b>Only the last section (level, faculty, testing) is optional — everything else takes 2 minutes, tops.</div>
     </div>
   </div>
 
   <div class="section wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">What we're planning</span>
       <h2>Nine ideas pinned to the board so far</h2>
       <p>Nothing here is final. Your answers in the survey decide what actually gets built first.</p>
@@ -355,7 +480,7 @@
     <div class="feature-grid" id="feature-grid"></div>
   </div>
 
-  <div class="bottom-cta wrap">
+  <div class="bottom-cta wrap reveal">
     <h2>Got 2 minutes? Help shape it.</h2>
     <button class="tear-cta" onclick="startSurvey()">Take the survey <span class="arrow">→</span></button>
   </div>
@@ -383,12 +508,20 @@
 <!-- ================= THANKS ================= -->
 <div id="view-thanks" class="thanks-shell">
   <div class="wrap">
-    <div class="stamp-badge">RECEIVED</div>
-    <h1>You just helped shape this app.</h1>
-    <p>You're one of the first students weighing in on what this becomes. Once we've gone through everyone's answers, we'll build the first version around what came up most — and you'll be the first to hear about it.</p>
-    <button class="tear-cta" onclick="goLanding()">Back to start <span class="arrow">→</span></button>
+    <div class="thanks-card torn-edge" id="thanks-card">
+      <div class="washi tl"></div>
+      <div class="washi tr"></div>
+      <div class="stamp-badge" id="stamp-badge">RECEIVED</div>
+      <h1>You just helped shape this app.</h1>
+      <p>You're one of the first students weighing in on what this becomes. Once we've gone through everyone's answers, we'll build the first version around what came up most — and you'll be the first to hear about it.</p>
+      <button class="tear-cta" onclick="goLanding()">Back to start <span class="arrow">→</span></button>
+    </div>
+    <div class="note-row">
+      <div class="sticky-note alt"><b>Fun fact</b>The feature at the top of the board gets built first — your pick in step 1 carries real weight.</div>
+    </div>
   </div>
 </div>
+<div id="confetti-layer"></div>
 
 <!-- ================= ADMIN ================= -->
 <div id="view-admin-login" class="admin-shell">
@@ -441,9 +574,20 @@ const TABLE_NAME = "survey_responses";
 // persistSession:false means the admin session lives only in memory for this
 // page load — closing the tab or refreshing clears it, so staff always has
 // to log in again rather than the browser remembering them.
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: false }
-});
+// Wrapped in try/catch: if the Supabase CDN script is blocked or slow to
+// load, `supabase` is undefined here — without this guard that throws and
+// silently kills every statement after it in this file (feature grid,
+// scroll reveal, tilt effect, counter — everything below the hero would
+// simply never render). Admin login/dashboard just won't work if this
+// fails, but the rest of the page stays fully functional.
+let supabaseClient = null;
+try{
+  supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false }
+  });
+}catch(e){
+  console.error('Supabase failed to initialize — admin login will be unavailable:', e);
+}
 
 const FEATURES = [
   {id:'feed', tag:'SF', icon:'rss', name:'Social Feed', desc:'Posts, updates, campus chatter'},
@@ -504,9 +648,50 @@ function startSurvey(){
   renderStep();
   window.scrollTo(0,0);
 }
-function goThanks(){ hideAll(); document.getElementById('view-thanks').style.display='block'; window.scrollTo(0,0); }
+function goThanks(){
+  hideAll();
+  document.getElementById('view-thanks').style.display='block';
+  window.scrollTo(0,0);
+  const stamp = document.getElementById('stamp-badge');
+  stamp.classList.remove('pop'); void stamp.offsetWidth; stamp.classList.add('pop');
+  fireConfetti();
+}
+
+/* ---------- confetti burst ---------- */
+function fireConfetti(){
+  const layer = document.getElementById('confetti-layer');
+  if(!layer) return;
+  layer.innerHTML = '';
+  const colors = ['#2f6f4e','#f2c230','#c1432e','#3c6e8f','#8a5a2b'];
+  const count = 60;
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const left = Math.random()*100;
+    const drift = (Math.random()*140-70).toFixed(0);
+    const rot = (Math.random()*520-260).toFixed(0);
+    const duration = (1.6 + Math.random()*1.1).toFixed(2);
+    const delay = (Math.random()*0.35).toFixed(2);
+    const color = colors[i % colors.length];
+    piece.style.left = left+'%';
+    piece.style.background = color;
+    piece.style.setProperty('--drift', drift+'px');
+    piece.style.setProperty('--rot', rot+'deg');
+    piece.style.animationDuration = duration+'s';
+    piece.style.animationDelay = delay+'s';
+    if(Math.random()>0.5) piece.style.borderRadius = '50%';
+    layer.appendChild(piece);
+  }
+  setTimeout(()=>{ layer.innerHTML = ''; }, 3200);
+}
 async function goAdmin(){
   hideAll();
+  if(!supabaseClient){
+    document.getElementById('view-admin-login').style.display='block';
+    document.getElementById('admin-login-err').textContent = 'Admin login is unavailable right now — the database connection failed to load. Try refreshing the page.';
+    window.scrollTo(0,0);
+    return;
+  }
   const { data:{ session } } = await supabaseClient.auth.getSession();
   if(session){
     document.getElementById('view-admin').style.display='block';
@@ -522,6 +707,7 @@ async function tryAdminLogin(){
   const btn = document.getElementById('admin-login-btn');
   const errEl = document.getElementById('admin-login-err');
   errEl.textContent = '';
+  if(!supabaseClient){ errEl.textContent = 'Admin login is unavailable right now — try refreshing the page.'; return; }
   if(!email || !password){ errEl.textContent = 'Enter your email and password.'; return; }
   btn.disabled = true;
   btn.textContent = 'Signing in...';
@@ -536,23 +722,101 @@ async function tryAdminLogin(){
   goAdmin();
 }
 async function adminLogout(){
-  await supabaseClient.auth.signOut();
+  if(supabaseClient){ await supabaseClient.auth.signOut(); }
   goLanding();
 }
 
 /* ================= RENDER LANDING FEATURES ================= */
 function renderFeatureGrid(){
   const grid = document.getElementById('feature-grid');
-  grid.innerHTML = FEATURES.map(f => `
-    <div class="card-pin">
-      <span class="tag-badge"><i data-lucide="${f.icon}"></i></span>
+  grid.innerHTML = FEATURES.map((f,i) => `
+    <div class="card-pin reveal" style="transition-delay:${(i%3)*70}ms">
+      <span class="tag-badge c${i%5}"><i data-lucide="${f.icon}"></i></span>
       <h3>${f.name}</h3>
       <p>${f.desc}</p>
     </div>
   `).join('');
   if(window.lucide) lucide.createIcons();
+  setupTilt();
 }
-renderFeatureGrid();
+try{ renderFeatureGrid(); }catch(e){ console.error('Feature grid failed to render:', e); }
+
+/* ---------- scroll reveal ----------
+   Progressive enhancement only: .reveal elements start at opacity:0 in CSS,
+   so if the IntersectionObserver below never fires for any reason (an
+   unusual embedding context, a slow/blocked resource earlier in this script,
+   etc.), content must not stay permanently invisible. The safety timeout at
+   the bottom of this block guarantees every .reveal element becomes visible
+   no matter what, even with JS partially broken. */
+let revealObserver;
+function setupScrollReveal(){
+  try{
+    if(!('IntersectionObserver' in window)){
+      document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
+      return;
+    }
+    if(!revealObserver){
+      revealObserver = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            entry.target.classList.add('in-view');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold:0.1, rootMargin:'0px 0px -20px 0px' });
+    }
+    document.querySelectorAll('.reveal:not(.in-view)').forEach(el=>revealObserver.observe(el));
+  }catch(e){
+    console.error('Scroll reveal failed, showing content immediately:', e);
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
+  }
+}
+try{ setupScrollReveal(); }catch(e){}
+document.addEventListener('DOMContentLoaded', setupScrollReveal);
+// Hard safety net — no matter what else went wrong above, nothing stays hidden.
+setTimeout(()=>{
+  document.querySelectorAll('.reveal:not(.in-view)').forEach(el=>el.classList.add('in-view'));
+}, 1800);
+
+
+/* ---------- tilt hover on feature cards ---------- */
+function setupTilt(){
+  document.querySelectorAll('.card-pin').forEach(card=>{
+    if(card.dataset.tiltBound) return;
+    card.dataset.tiltBound = '1';
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const rotateY = ((x - r.width/2) / (r.width/2)) * 7;
+      const rotateX = -((y - r.height/2) / (r.height/2)) * 7;
+      card.style.transform = `perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+    });
+    card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
+  });
+}
+
+/* ---------- live response counter ---------- */
+async function loadResponseCount(){
+  if(SUPABASE_URL.includes('YOUR-PROJECT-REF')) return; // not configured yet
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=id`, {
+      method:'HEAD',
+      headers:{
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer':'count=exact'
+      }
+    });
+    const range = res.headers.get('content-range'); // e.g. "0-9/128"
+    if(!range) return;
+    const total = parseInt(range.split('/')[1], 10);
+    if(!Number.isFinite(total) || total <= 0) return;
+    document.getElementById('response-counter-text').textContent =
+      `${total} student${total===1?'':'s'} ${total===1?'has':'have'} responded so far`;
+    document.getElementById('response-counter').style.display = 'inline-flex';
+  }catch(e){ /* fail silently — counter is decorative, not critical */ }
+}
+loadResponseCount();
 
 /* ================= SURVEY STEP RENDERING ================= */
 function renderProgress(){
@@ -584,9 +848,9 @@ function renderStep(){
       <div class="pick-hint" id="pick-hint">0 / 5 selected</div>
     `;
     const grid = document.getElementById('pick-grid');
-    grid.innerHTML = FEATURES.map(f => `
+    grid.innerHTML = FEATURES.map((f,i) => `
       <div class="pick-card ${survey.topFeatures.includes(f.id)?'on':''}" data-id="${f.id}" onclick="togglePick('${f.id}')">
-        <span class="pick-tag"><i data-lucide="${f.icon}"></i></span><span class="lbl">${f.name}</span>
+        <span class="pick-tag c${i%5}"><i data-lucide="${f.icon}"></i></span><span class="lbl">${f.name}</span>
         <span class="check-badge">✓</span>
       </div>
     `).join('');
@@ -851,7 +1115,7 @@ async function nextStep(){
 async function submitSurvey(){
   const btn = document.getElementById('btn-next');
   btn.disabled = true;
-  btn.textContent = 'Submitting...';
+  btn.innerHTML = '<span class="btn-spinner"></span>Submitting...';
   try{
     const payload = {...survey, submittedAt: new Date().toISOString()};
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
@@ -878,7 +1142,15 @@ let allResponses = [];
 
 async function loadAdminData(){
   const body = document.getElementById('admin-body');
-  body.innerHTML = '<div class="empty-note">Loading responses...</div>';
+  body.innerHTML = `
+    <div class="skel-stat-grid">
+      <div class="skel skel-stat"></div><div class="skel skel-stat"></div>
+      <div class="skel skel-stat"></div><div class="skel skel-stat"></div>
+    </div>
+    <div class="skel skel-panel"></div>
+    <div class="skel skel-panel"></div>
+    <div class="skel skel-panel"></div>
+  `;
   try{
     const { data:{ session } } = await supabaseClient.auth.getSession();
     if(!session){
