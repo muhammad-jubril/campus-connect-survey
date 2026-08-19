@@ -123,7 +123,8 @@
   }
   .card-pin:hover{transform:translateY(-3px) rotate(-0.4deg);}
   .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px 18px;}
-  .tag-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11.5px; letter-spacing:0.5px; color:var(--marker-dark); background:rgba(47,111,78,0.14); border:1px solid rgba(47,111,78,0.35); padding:4px 8px; border-radius:4px; margin-bottom:10px;}
+  .tag-badge{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; color:var(--marker-dark); background:rgba(47,111,78,0.14); border:1px solid rgba(47,111,78,0.35); border-radius:8px; margin-bottom:10px;}
+  .tag-badge svg{width:18px; height:18px; stroke-width:2.2;}
   .feature-grid h3{font-size:15.5px; margin:0 0 6px;}
   .feature-grid p{font-size:13px; color:rgba(28,27,23,0.6); margin:0; line-height:1.4;}
   @media(max-width:760px){.feature-grid{grid-template-columns:repeat(2,1fr);}}
@@ -181,7 +182,8 @@
     display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
     background:var(--card); transition:.15s ease;
   }
-  .pick-tag{display:inline-flex; align-items:center; justify-content:center; width:32px; height:22px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:10.5px; color:var(--marker-dark); background:rgba(47,111,78,0.14); border:1px solid rgba(47,111,78,0.35); border-radius:4px; flex-shrink:0;}
+  .pick-tag{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; color:var(--marker-dark); background:rgba(47,111,78,0.14); border:1px solid rgba(47,111,78,0.35); border-radius:7px; flex-shrink:0;}
+  .pick-tag svg{width:17px; height:17px; stroke-width:2.2;}
   .pick-card .lbl{font-size:13.5px; font-weight:600;}
   .pick-card.on{border-color:var(--marker); background:rgba(47,111,78,0.08); box-shadow:0 0 0 1px var(--marker);}
   .pick-card.disabled{opacity:0.4; cursor:not-allowed;}
@@ -335,8 +337,8 @@
     <div class="corkboard">
       <div class="flyer">
         <div class="pushpin"></div>
-        <span class="eyebrow">Coming to NWU</span>
-        <h1>We're building something <span class="accent">for NWU students.</span></h1>
+        <span class="eyebrow">Coming to your campus</span>
+        <h1>We're building something <span class="accent">for students.</span></h1>
         <p>A social platform made specifically for students — built around what actually happens on campus. Before we build it, we want to know: what do <em>you</em> want to see in it?</p>
         <button class="tear-cta" onclick="startSurvey()">Take the 2-minute survey <span class="arrow">→</span></button>
         <div class="time-note mono">~2 MINUTES · 100% ANONYMOUS</div>
@@ -424,6 +426,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
 /* ================= CONFIG ================= */
 // ---- Database connection (Supabase) ----
@@ -435,18 +438,23 @@ const TABLE_NAME = "survey_responses";
 
 // Staff login now uses real Supabase Auth (see setup instructions) —
 // create the admin account in Project Settings -> Authentication -> Users.
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// persistSession:false means the admin session lives only in memory for this
+// page load — closing the tab or refreshing clears it, so staff always has
+// to log in again rather than the browser remembering them.
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false }
+});
 
 const FEATURES = [
-  {id:'feed', tag:'SF', name:'Social Feed', desc:'Posts, updates, campus chatter'},
-  {id:'profiles', tag:'PR', name:'Student Profiles', desc:'Your page on campus'},
-  {id:'communities', tag:'CM', name:'Communities', desc:'Groups by interest or course'},
-  {id:'trending', tag:'TR', name:'Trending Posts', desc:'What campus is talking about'},
-  {id:'events', tag:'EV', name:'Campus Events', desc:'Never miss what\'s on'},
-  {id:'marketplace', tag:'MK', name:'Student Marketplace', desc:'Buy & sell with students'},
-  {id:'orgpages', tag:'OR', name:'Dept/Org Pages', desc:'Official pages that post updates'},
-  {id:'notifications', tag:'NT', name:'Notifications', desc:'Stay in the loop'},
-  {id:'lostfound', tag:'LF', name:'Lost & Found', desc:'Lost your ID? Post it here'},
+  {id:'feed', tag:'SF', icon:'rss', name:'Social Feed', desc:'Posts, updates, campus chatter'},
+  {id:'profiles', tag:'PR', icon:'user-round', name:'Student Profiles', desc:'Your page on campus'},
+  {id:'communities', tag:'CM', icon:'users', name:'Communities', desc:'Groups by interest or course'},
+  {id:'trending', tag:'TR', icon:'trending-up', name:'Trending Posts', desc:'What campus is talking about'},
+  {id:'events', tag:'EV', icon:'calendar', name:'Campus Events', desc:'Never miss what\'s on'},
+  {id:'marketplace', tag:'MK', icon:'shopping-bag', name:'Student Marketplace', desc:'Buy & sell with students'},
+  {id:'orgpages', tag:'OR', icon:'building-2', name:'Dept/Org Pages', desc:'Official pages that post updates'},
+  {id:'notifications', tag:'NT', icon:'bell', name:'Notifications', desc:'Stay in the loop'},
+  {id:'lostfound', tag:'LF', icon:'package-search', name:'Lost & Found', desc:'Lost your ID? Post it here'},
 ];
 
 const HABIT_ROWS = [
@@ -537,11 +545,12 @@ function renderFeatureGrid(){
   const grid = document.getElementById('feature-grid');
   grid.innerHTML = FEATURES.map(f => `
     <div class="card-pin">
-      <span class="tag-badge">${f.tag}</span>
+      <span class="tag-badge"><i data-lucide="${f.icon}"></i></span>
       <h3>${f.name}</h3>
       <p>${f.desc}</p>
     </div>
   `).join('');
+  if(window.lucide) lucide.createIcons();
 }
 renderFeatureGrid();
 
@@ -577,10 +586,11 @@ function renderStep(){
     const grid = document.getElementById('pick-grid');
     grid.innerHTML = FEATURES.map(f => `
       <div class="pick-card ${survey.topFeatures.includes(f.id)?'on':''}" data-id="${f.id}" onclick="togglePick('${f.id}')">
-        <span class="pick-tag">${f.tag}</span><span class="lbl">${f.name}</span>
+        <span class="pick-tag"><i data-lucide="${f.icon}"></i></span><span class="lbl">${f.name}</span>
         <span class="check-badge">✓</span>
       </div>
     `).join('');
+    if(window.lucide) lucide.createIcons();
     updatePickHint();
   }
 
