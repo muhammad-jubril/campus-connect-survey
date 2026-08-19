@@ -295,6 +295,27 @@
   .adrop-option .opt-check{opacity:0; transform:scale(0.5); color:var(--marker); font-weight:800; transition:transform .15s ease, opacity .15s ease;}
   .adrop-option.selected .opt-check{opacity:1; transform:scale(1);}
 
+  .tsearch{position:relative;}
+  .tsearch-input:disabled{opacity:0.5; cursor:not-allowed; background:rgba(28,27,23,0.04);}
+  .tsearch-panel{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:30;
+    max-height:220px; overflow-y:auto;
+    border:1.5px solid var(--line); border-radius:8px; background:var(--card);
+    box-shadow:var(--shadow);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(-6px);
+    transition:opacity .14s ease, transform .16s cubic-bezier(.34,1.56,.64,1), visibility .14s;
+  }
+  .tsearch-panel.open{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
+  .tsearch-option{padding:10px 14px; font-size:13.5px; cursor:pointer; border-top:1px dashed var(--line);}
+  .tsearch-option:first-child{border-top:none;}
+  .tsearch-option:hover{background:rgba(47,111,78,0.08);}
+  .tsearch-fallback{margin-top:8px; font-size:12.5px; color:rgba(28,27,23,0.65);}
+  .fallback-link{background:none; border:none; padding:0; color:var(--marker-dark); font-weight:700; text-decoration:underline; cursor:pointer; font-size:12.5px; font-family:inherit;}
+  .suggestion-form{display:flex; gap:8px; margin-top:6px; align-items:center; flex-wrap:wrap;}
+  .suggestion-input{flex:1; min-width:160px; padding:9px 11px; font-size:13px; border:1.5px solid var(--line); border-radius:6px; background:var(--card);}
+  .suggestion-thanks{color:var(--marker-dark); font-weight:600;}
+
   .field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;}
   @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
 
@@ -493,7 +514,7 @@
     <button class="tear-cta" onclick="startSurvey()">Take the survey <span class="arrow">→</span></button>
   </div>
 
-  <footer>MADE BY A STUDENT, FOR STUDENTS — NOT AFFILIATED WITH SCHOOL ADMIN</footer>
+  <footer>MADE BY STUDENTS, FOR STUDENTS — NOT AFFILIATED WITH SCHOOL ADMIN</footer>
 </div>
 
 <!-- ================= SURVEY ================= -->
@@ -620,13 +641,25 @@ const HABIT_OPTIONS = ['WhatsApp Groups','Instagram','Twitter/X','Telegram','Phy
 
 const LEVELS = ['100','200','300','400','500','600+','Postgraduate','Other'];
 
+const FACULTIES_DATA = {
+  "Faculty of Basic Medical Science": ["Anatomy","Biochemistry","Physiology"],
+  "Faculty of Clinical Science": ["Community Medicine","Pharmacology and Therapeutics"],
+  "Faculty of Computing": ["Computer Science","Cybersecurity","Information and Communication Technology","Software Engineering"],
+  "Faculty of Education": ["Science Education","Arts and Social Sciences Education","Library and Information Science","Educational Foundations","Curriculum and Instructions","Technical Education"],
+  "Faculty of Humanities": ["History and International Studies","Hausa Language","English and Literacy Studies","Arabic","Islamic Studies"],
+  "Faculty of Law": ["Islamic Law","Public Law"],
+  "Faculty of Science": ["Biological Science","Chemistry","Mathematics","Physics"],
+  "Faculty of Social and Management Science": ["Accounting and Finance","Business Administration","Economics","Geography"]
+};
+function facultyNames(){ return Object.keys(FACULTIES_DATA); }
+function departmentsFor(faculty){ return FACULTIES_DATA[faculty] || []; }
+
 /* ================= STATE ================= */
 let survey = {
   topFeatures: [],
   addFeature: '',
   painPoint: '',
   infoSource: '',
-  whatsappUse: '',
   dailyContent: '',
   wouldUse: '',
   habits: {},
@@ -650,7 +683,7 @@ function hideAll(){
 function goLanding(){ hideAll(); document.getElementById('view-landing').style.display='block'; window.scrollTo(0,0); }
 function startSurvey(){
   hideAll();
-  survey = {topFeatures:[],addFeature:'',painPoint:'',infoSource:'',whatsappUse:'',dailyContent:'',wouldUse:'',habits:{},level:'',faculty:'',department:'',wantsTest:false,contact:''};
+  survey = {topFeatures:[],addFeature:'',painPoint:'',infoSource:'',dailyContent:'',wouldUse:'',habits:{},level:'',faculty:'',department:'',wantsTest:false,contact:''};
   currentStep = 1;
   document.getElementById('view-survey').style.display='block';
   renderStep();
@@ -850,10 +883,10 @@ function renderStep(){
 
   if(currentStep===1){
     el.innerHTML = `
-      <div class="q-title">Pick up to 5 features you'd actually use</div>
+      <div class="q-title">Pick the features you'd actually use</div>
       <div class="q-sub">These are just what we're considering — your picks decide what gets built first.</div>
       <div class="pick-grid" id="pick-grid"></div>
-      <div class="pick-hint" id="pick-hint">0 / 5 selected</div>
+      <div class="pick-hint" id="pick-hint">0 selected</div>
     `;
     const grid = document.getElementById('pick-grid');
     grid.innerHTML = FEATURES.map((f,i) => `
@@ -883,8 +916,6 @@ function renderStep(){
       <textarea id="f-pain">${survey.painPoint}</textarea>
       <label class="field-label">Where do you currently get campus information?</label>
       <textarea id="f-info">${survey.infoSource}</textarea>
-      <label class="field-label">What do you mainly use WhatsApp groups for?</label>
-      <textarea id="f-whatsapp">${survey.whatsappUse}</textarea>
       <label class="field-label">What kind of content would make you check this app every day?</label>
       <textarea id="f-daily">${survey.dailyContent}</textarea>
       <label class="field-label">Would you use an app where students from your university connect, post, create communities, and discover what's happening around campus?</label>
@@ -892,7 +923,7 @@ function renderStep(){
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" onclick="pickWouldUse('${o}')">${o}</div>`).join('')}
       </div>
     `;
-    ['f-pain','f-info','f-whatsapp','f-daily'].forEach(id=>{
+    ['f-pain','f-info','f-daily'].forEach(id=>{
       document.getElementById(id).addEventListener('input', updateNextButtonState);
     });
   }
@@ -924,24 +955,192 @@ function renderStep(){
         </div>
         <div>
           <label class="field-label">Faculty</label>
-          <input type="text" id="f-faculty" value="${survey.faculty}" placeholder="e.g. Engineering" />
+          ${renderFacultyField()}
         </div>
       </div>
-      <label class="field-label">Department</label>
-      <input type="text" id="f-dept" value="${survey.department}" placeholder="e.g. Computer Science" style="margin-bottom:18px;" />
+      <div id="dept-field-wrap" style="margin-bottom:18px;">
+        <label class="field-label">Department</label>
+        ${renderDepartmentField()}
+      </div>
       <label class="checkbox-line">
         <input type="checkbox" id="f-wants-test" ${survey.wantsTest?'checked':''} onchange="toggleWantsTest(this.checked)" />
         <span>Yes, I'd like to be one of the first students to test the app</span>
       </label>
       <div id="contact-wrap" style="display:${survey.wantsTest?'block':'none'}; margin-top:12px;">
         <label class="field-label">Your WhatsApp number</label>
-        <input type="tel" id="f-contact" value="${survey.contact}" placeholder="e.g. 0803 123 4567" />
+        <input type="tel" id="f-contact" value="${survey.contact}" placeholder="e.g. 08031234567" maxlength="11" />
+        <div class="field-sub" id="contact-hint">Numbers only, 11 digits.</div>
       </div>
     `;
     initDropdowns();
+    initTypeaheads();
+    const contactEl = document.getElementById('f-contact');
+    if(contactEl) contactEl.addEventListener('input', updateNextButtonState);
   }
 
   updateNextButtonState();
+}
+
+function renderFacultyField(){
+  return `
+    <div class="tsearch" id="faculty-tsearch">
+      <input type="text" id="f-faculty" class="tsearch-input" placeholder="Start typing your faculty..." autocomplete="off" value="${escapeHtml(survey.faculty)}" />
+      <div class="tsearch-panel" id="faculty-panel"></div>
+    </div>
+    <div class="tsearch-fallback" id="faculty-fallback" style="display:none;"></div>
+  `;
+}
+function renderDepartmentField(){
+  const disabled = !survey.faculty;
+  return `
+    <div class="tsearch" id="dept-tsearch">
+      <input type="text" id="f-dept" class="tsearch-input" placeholder="${disabled?'Select a faculty first':'Start typing your department...'}" autocomplete="off" value="${escapeHtml(survey.department)}" ${disabled?'disabled':''} />
+      <div class="tsearch-panel" id="dept-panel"></div>
+    </div>
+    <div class="tsearch-fallback" id="dept-fallback" style="display:none;"></div>
+  `;
+}
+
+function renderSuggestionList(panelEl, options, onPick){
+  if(!options || options.length===0){
+    panelEl.innerHTML = '';
+    panelEl.classList.remove('open');
+    return false;
+  }
+  panelEl.innerHTML = options.map(o=>`<div class="tsearch-option" data-value="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('');
+  panelEl.classList.add('open');
+  panelEl.querySelectorAll('.tsearch-option').forEach(opt=>{
+    opt.addEventListener('mousedown', (e)=>{
+      e.preventDefault();
+      onPick(opt.dataset.value);
+    });
+  });
+  return true;
+}
+
+function openSuggestionForm(type, prefillValue, facultyContext, containerEl){
+  containerEl.innerHTML = `
+    <div class="suggestion-form">
+      <input type="text" class="suggestion-input" id="suggestion-input-${type}" value="${escapeHtml(prefillValue||'')}" placeholder="${type==='faculty' ? 'Type your faculty name' : 'Type your department name'}" />
+      <button type="button" class="btn-small suggestion-submit-btn" id="suggestion-submit-${type}">Submit</button>
+    </div>
+    <div class="err-note" id="suggestion-err-${type}"></div>
+  `;
+  document.getElementById(`suggestion-submit-${type}`).addEventListener('click', async ()=>{
+    const val = document.getElementById(`suggestion-input-${type}`).value.trim();
+    const errEl = document.getElementById(`suggestion-err-${type}`);
+    if(!val){ errEl.textContent = 'Type a name first.'; return; }
+    const btn = document.getElementById(`suggestion-submit-${type}`);
+    btn.disabled = true; btn.textContent = 'Sending...';
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/list_suggestions`, {
+        method:'POST',
+        headers:{
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body: JSON.stringify({ kind: type, value: val, faculty_context: facultyContext || null })
+      });
+      if(!res.ok) throw new Error('failed');
+      containerEl.innerHTML = `<span class="suggestion-thanks">Thanks — we'll review it. You can leave this field blank for now.</span>`;
+    }catch(e){
+      errEl.textContent = "Couldn't send — check your connection and try again.";
+      btn.disabled=false; btn.textContent='Submit';
+    }
+  });
+}
+
+function initTypeaheads(){
+  setupFacultyTypeahead();
+  setupDepartmentTypeahead();
+}
+
+function setupFacultyTypeahead(){
+  const input = document.getElementById('f-faculty');
+  const panel = document.getElementById('faculty-panel');
+  const fallback = document.getElementById('faculty-fallback');
+  if(!input) return;
+
+  function hideFallback(){ fallback.style.display='none'; fallback.innerHTML=''; }
+  function showFallback(query){
+    fallback.style.display = 'block';
+    fallback.innerHTML = `<span>Can't find your faculty? </span><button type="button" class="fallback-link" id="faculty-add-link">Add it here</button>`;
+    document.getElementById('faculty-add-link').addEventListener('click', ()=> openSuggestionForm('faculty', query, null, fallback));
+  }
+
+  input.addEventListener('input', ()=>{
+    survey.faculty = '';
+    survey.department = '';
+    const q = input.value.trim().toLowerCase();
+    hideFallback();
+    if(!q){
+      panel.classList.remove('open');
+      refreshDepartmentField();
+      updateNextButtonState();
+      return;
+    }
+    const matches = facultyNames().filter(fn=>fn.toLowerCase().includes(q));
+    const found = renderSuggestionList(panel, matches, (val)=>{
+      input.value = val;
+      survey.faculty = val;
+      survey.department = '';
+      panel.classList.remove('open');
+      hideFallback();
+      refreshDepartmentField();
+      updateNextButtonState();
+    });
+    if(!found) showFallback(input.value.trim());
+    refreshDepartmentField();
+    updateNextButtonState();
+  });
+
+  input.addEventListener('blur', ()=>{
+    setTimeout(()=>{ panel.classList.remove('open'); }, 120);
+  });
+}
+
+function refreshDepartmentField(){
+  const wrap = document.getElementById('dept-field-wrap');
+  if(!wrap) return;
+  wrap.innerHTML = `<label class="field-label">Department</label>${renderDepartmentField()}`;
+  setupDepartmentTypeahead();
+}
+
+function setupDepartmentTypeahead(){
+  const input = document.getElementById('f-dept');
+  const panel = document.getElementById('dept-panel');
+  const fallback = document.getElementById('dept-fallback');
+  if(!input) return;
+
+  function hideFallback(){ fallback.style.display='none'; fallback.innerHTML=''; }
+  function showFallback(query){
+    fallback.style.display = 'block';
+    fallback.innerHTML = `<span>Can't find your department? </span><button type="button" class="fallback-link" id="dept-add-link">Add it here</button>`;
+    document.getElementById('dept-add-link').addEventListener('click', ()=> openSuggestionForm('department', query, survey.faculty, fallback));
+  }
+
+  input.addEventListener('input', ()=>{
+    survey.department = '';
+    const q = input.value.trim().toLowerCase();
+    hideFallback();
+    if(!q){ panel.classList.remove('open'); updateNextButtonState(); return; }
+    const options = departmentsFor(survey.faculty).filter(d=>d.toLowerCase().includes(q));
+    const found = renderSuggestionList(panel, options, (val)=>{
+      input.value = val;
+      survey.department = val;
+      panel.classList.remove('open');
+      hideFallback();
+      updateNextButtonState();
+    });
+    if(!found) showFallback(input.value.trim());
+    updateNextButtonState();
+  });
+
+  input.addEventListener('blur', ()=>{
+    setTimeout(()=>{ panel.classList.remove('open'); }, 120);
+  });
 }
 
 function renderDropdown(key, options, currentValue){
@@ -1015,7 +1214,6 @@ function togglePick(id){
   const idx = survey.topFeatures.indexOf(id);
   if(idx>-1){ survey.topFeatures.splice(idx,1); }
   else {
-    if(survey.topFeatures.length>=5) return;
     survey.topFeatures.push(id);
   }
   document.querySelectorAll('.pick-card').forEach(c=>{
@@ -1025,11 +1223,7 @@ function togglePick(id){
   updateNextButtonState();
 }
 function updatePickHint(){
-  document.getElementById('pick-hint').textContent = `${survey.topFeatures.length} / 5 selected`;
-  document.querySelectorAll('.pick-card').forEach(c=>{
-    const on = survey.topFeatures.includes(c.dataset.id);
-    c.classList.toggle('disabled', !on && survey.topFeatures.length>=5);
-  });
+  document.getElementById('pick-hint').textContent = `${survey.topFeatures.length} selected`;
 }
 function pickWouldUse(v){
   survey.wouldUse = v;
@@ -1041,9 +1235,14 @@ function pickWouldUse(v){
 function toggleWantsTest(v){
   survey.wantsTest = v;
   document.getElementById('contact-wrap').style.display = v ? 'block' : 'none';
+  updateNextButtonState();
 }
 
 /* ================= STEP VALIDITY / BUTTON STATE ================= */
+function isValidWhatsapp(v){
+  const digits = (v||'').replace(/\D/g,'');
+  return digits.length === 11;
+}
 function isStepValid(){
   if(currentStep===1){
     return survey.topFeatures.length > 0;
@@ -1053,7 +1252,7 @@ function isStepValid(){
     return !!(el && el.value.trim());
   }
   if(currentStep===3){
-    const ids = ['f-pain','f-info','f-whatsapp','f-daily'];
+    const ids = ['f-pain','f-info','f-daily'];
     const allFilled = ids.every(id=>{
       const el = document.getElementById(id);
       return !!(el && el.value.trim());
@@ -1064,7 +1263,12 @@ function isStepValid(){
     return HABIT_ROWS.every(row => !!survey.habits[row.id]);
   }
   if(currentStep===5){
-    return true; // explicitly optional
+    if(survey.wantsTest){
+      const el = document.getElementById('f-contact');
+      const val = el ? el.value.trim() : '';
+      return isValidWhatsapp(val);
+    }
+    return true; // explicitly optional otherwise
   }
   return true;
 }
@@ -1078,13 +1282,10 @@ function collectStepInputs(){
   if(currentStep===3){
     survey.painPoint = document.getElementById('f-pain').value.trim();
     survey.infoSource = document.getElementById('f-info').value.trim();
-    survey.whatsappUse = document.getElementById('f-whatsapp').value.trim();
     survey.dailyContent = document.getElementById('f-daily').value.trim();
   }
   if(currentStep===5){
-    survey.faculty = document.getElementById('f-faculty').value.trim();
-    survey.department = document.getElementById('f-dept').value.trim();
-    if(survey.wantsTest){ survey.contact = document.getElementById('f-contact').value.trim(); }
+    if(survey.wantsTest){ survey.contact = document.getElementById('f-contact').value.trim().replace(/\D/g,''); }
   }
 }
 
@@ -1094,6 +1295,7 @@ function validateStep(){
   if(currentStep===2) return 'Please fill this in to continue.';
   if(currentStep===3) return 'Please answer all questions to continue.';
   if(currentStep===4) return 'Please select an option for each item.';
+  if(currentStep===5) return 'Enter a valid 11-digit WhatsApp number.';
   return null;
 }
 
@@ -1147,6 +1349,7 @@ async function submitSurvey(){
 
 /* ================= ADMIN DASHBOARD ================= */
 let allResponses = [];
+let allSuggestions = [];
 
 async function loadAdminData(){
   const body = document.getElementById('admin-body');
@@ -1179,6 +1382,14 @@ async function loadAdminData(){
     if(!res.ok){ throw new Error('fetch failed: ' + res.status); }
     const rows = await res.json();
     allResponses = rows.map(row => ({ ...row.data, submittedAt: row.data.submittedAt || row.submitted_at }));
+
+    try{
+      const sugRes = await fetch(`${SUPABASE_URL}/rest/v1/list_suggestions?select=*&order=submitted_at.desc`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${session.access_token}` }
+      });
+      allSuggestions = sugRes.ok ? await sugRes.json() : [];
+    }catch(e){ allSuggestions = []; }
+
     renderAdmin();
   }catch(e){
     body.innerHTML = '<div class="empty-note">Could not load responses. Try refreshing.</div>';
@@ -1213,8 +1424,32 @@ function featureName(id){ const f = FEATURES.find(x=>x.id===id); return f ? f.na
 function renderAdmin(){
   const body = document.getElementById('admin-body');
   const n = allResponses.length;
+
+  const suggestionsPanel = `
+    <div class="panel">
+      <h3>Faculty / department suggestions</h3>
+      ${allSuggestions.length ? `
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Time</th><th>Type</th><th>Suggested</th><th>Faculty context</th></tr></thead>
+            <tbody>
+              ${allSuggestions.map(s=>`
+                <tr>
+                  <td>${s.submitted_at ? new Date(s.submitted_at).toLocaleString() : ''}</td>
+                  <td>${escapeHtml(s.kind||'')}</td>
+                  <td>${escapeHtml(s.value||'')}</td>
+                  <td>${escapeHtml(s.faculty_context||'—')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : '<div class="empty-note">No suggestions yet.</div>'}
+    </div>
+  `;
+
   if(n===0){
-    body.innerHTML = '<div class="empty-note">No responses yet. Share the survey link to start collecting answers.</div>';
+    body.innerHTML = '<div class="empty-note">No responses yet. Share the survey link to start collecting answers.</div>' + suggestionsPanel;
     return;
   }
 
@@ -1256,13 +1491,14 @@ function renderAdmin(){
       <h3>What students said they'd add</h3>
       ${allResponses.filter(r=>r.addFeature).slice(0,40).map(r=>`<div style="padding:8px 0; border-bottom:1px dashed var(--line); font-size:13.5px;">${escapeHtml(r.addFeature)}</div>`).join('') || '<div class="empty-note">No answers yet</div>'}
     </div>
+    ${suggestionsPanel}
     <div class="panel">
       <h3>Raw responses</h3>
       <div class="table-scroll">
         <table>
           <thead><tr>
             <th>Time</th><th>Top picks</th><th>Would add</th><th>Pain point</th><th>Info source</th>
-            <th>WhatsApp use</th><th>Daily content</th><th>Would use</th><th>Level</th><th>Faculty</th><th>Dept</th><th>Wants test</th><th>Contact</th>
+            <th>Daily content</th><th>Would use</th><th>Level</th><th>Faculty</th><th>Dept</th><th>Wants test</th><th>Contact</th>
           </tr></thead>
           <tbody>
             ${allResponses.map(r=>`
@@ -1272,7 +1508,6 @@ function renderAdmin(){
                 <td>${escapeHtml(r.addFeature||'')}</td>
                 <td>${escapeHtml(r.painPoint||'')}</td>
                 <td>${escapeHtml(r.infoSource||'')}</td>
-                <td>${escapeHtml(r.whatsappUse||'')}</td>
                 <td>${escapeHtml(r.dailyContent||'')}</td>
                 <td>${escapeHtml(r.wouldUse||'')}</td>
                 <td>${escapeHtml(r.level||'')}</td>
@@ -1297,7 +1532,7 @@ function escapeHtml(str){
 
 function exportCSV(){
   if(allResponses.length===0) return;
-  const cols = ['submittedAt','topFeatures','addFeature','painPoint','infoSource','whatsappUse','dailyContent','wouldUse','level','faculty','department','wantsTest','contact'];
+  const cols = ['submittedAt','topFeatures','addFeature','painPoint','infoSource','dailyContent','wouldUse','level','faculty','department','wantsTest','contact'];
   const rows = [cols.join(',')];
   allResponses.forEach(r=>{
     const row = cols.map(c=>{
