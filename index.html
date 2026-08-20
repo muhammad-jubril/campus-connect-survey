@@ -945,8 +945,8 @@ function renderStep(){
       <div class="choice-row" id="wouldUse-row">
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" onclick="pickWouldUse('${o}')">${o}</div>`).join('')}
       </div>
-      <label class="field-label">Just curious — would you use an AI assistant built into the app?</label>
-      <div class="field-sub">Just for us — this one isn't saved anywhere.</div>
+      <label class="field-label">Would you use an AI assistant built into the app?</label>
+      <div class="field-sub"></div>
       <div class="choice-row" id="aiInterest-row">
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${aiInterest===o?'on':''}" onclick="pickAiInterest('${o}')">${o}</div>`).join('')}
       </div>
