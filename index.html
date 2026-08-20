@@ -266,6 +266,7 @@
   textarea{resize:vertical; min-height:76px; margin-bottom:16px;}
   .field-label{display:block; font-size:13px; font-weight:700; margin:0 0 8px;}
   .field-sub{display:block; font-size:12px; color:rgba(28,27,23,0.55); margin:-4px 0 8px;}
+  input + .field-sub, textarea + .field-sub{ margin-top:8px; }
 
   .choice-row{display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
   .choice-pill{
@@ -944,8 +945,8 @@ function renderStep(){
       <div class="choice-row" id="wouldUse-row">
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" onclick="pickWouldUse('${o}')">${o}</div>`).join('')}
       </div>
-      <label class="field-label">Would you use an AI assistant built into the app?</label>
-      <div class="field-sub"></div>
+      <label class="field-label">Just curious — would you use an AI assistant built into the app?</label>
+      <div class="field-sub">Just for us — this one isn't saved anywhere.</div>
       <div class="choice-row" id="aiInterest-row">
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${aiInterest===o?'on':''}" onclick="pickAiInterest('${o}')">${o}</div>`).join('')}
       </div>
@@ -995,7 +996,7 @@ function renderStep(){
       </label>
       <div id="contact-wrap" style="display:${survey.wantsTest?'block':'none'}; margin-top:12px;">
         <label class="field-label">Your WhatsApp number</label>
-        <input type="tel" id="f-contact" value="${survey.contact}" placeholder="e.g. 08031234567" maxlength="11" />
+        <input type="tel" id="f-contact" value="${survey.contact}" placeholder="e.g. 09012345678" maxlength="11" />
         <div class="field-sub" id="contact-hint">Numbers only, 11 digits.</div>
       </div>
     `;
