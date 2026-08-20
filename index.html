@@ -15,11 +15,15 @@
 <meta property="og:title" content="Campus Connect — Tell Us What You Want" />
 <meta property="og:description" content="A 2-minute, anonymous survey shaping the student app we're building next. Pin your picks to the board." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="https://campusconnectsurvey.vercel.app/og-image.png" />
+<meta property="og:image" content="https://campusconnectsurvey.vercel.app/og-image/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:url" content="https://campusconnectsurvey.vercel.app/" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Campus Connect — Tell Us What You Want" />
 <meta name="twitter:description" content="A 2-minute, anonymous survey shaping the student app we're building next." />
-<meta name="twitter:image" content="https://campusconnectsurvey.vercel.app/og-image.png" />
+<meta name="twitter:image" content="https://campusconnectsurvey.vercel.app/og-image/og-image.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,10 +146,18 @@
 
   /* ---------- features section ---------- */
   .section{padding:64px 0;}
-  .section-head{margin-bottom:28px;}
+  .section-head{
+    margin-bottom:32px; background:var(--card); border-radius:8px;
+    padding:28px 30px 28px 36px; box-shadow:var(--shadow); position:relative;
+  }
+  .section-head::before{
+    content:''; position:absolute; left:14px; top:24px; bottom:24px; width:4px;
+    border-radius:2px; background:var(--marker);
+  }
   .section-head .eyebrow{background:rgba(242,194,48,0.28); color:#7a5c0a;}
   .section-head h2{font-size:clamp(22px,3.4vw,30px); margin:8px 0 8px;}
   .section-head p{color:rgba(28,27,23,0.65); font-size:15px; margin:0; max-width:520px;}
+  @media(max-width:520px){ .section-head{padding:24px 22px 24px 30px;} }
 
   .card-pin{
     background:var(--card);
@@ -172,7 +184,11 @@
   .bottom-cta{text-align:center; padding:56px 0 80px;}
   .bottom-cta h2{font-size:clamp(22px,3.6vw,30px); margin:0 0 18px;}
 
-  footer{padding:26px 0 40px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11.5px; opacity:0.5;}
+  footer{
+    padding:40px 24px 48px; text-align:center; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:0.6px; line-height:1.9; opacity:0.5;
+    max-width:440px; margin:0 auto;
+  }
 
   /* ---------- survey ---------- */
   .survey-shell{display:none; padding:26px 0 70px;}
@@ -474,7 +490,6 @@
 
 <div class="topbar wrap">
   <div class="brand"><span class="pin-dot"></span> CAMPUS CONNECT · STUDENT INPUT</div>
-  <a class="admin-link" href="#" onclick="goAdmin();return false;">Staff</a>
 </div>
 
 <!-- ================= LANDING ================= -->
@@ -514,7 +529,7 @@
     <button class="tear-cta" onclick="startSurvey()">Take the survey <span class="arrow">→</span></button>
   </div>
 
-  <footer>MADE BY STUDENTS, FOR STUDENTS — NOT AFFILIATED WITH SCHOOL ADMIN</footer>
+  <footer>MADE BY STUDENTS, FOR STUDENTS<br>NOT AFFILIATED WITH SCHOOL ADMIN</footer>
 </div>
 
 <!-- ================= SURVEY ================= -->
@@ -781,6 +796,12 @@ function renderFeatureGrid(){
   setupTilt();
 }
 try{ renderFeatureGrid(); }catch(e){ console.error('Feature grid failed to render:', e); }
+
+// Hidden staff entry point — no visible link on the page.
+// Staff reach the login by going to: <your-site-url>/#staff-portal
+if(window.location.hash === '#staff-portal'){
+  goAdmin();
+}
 
 /* ---------- scroll reveal ----------
    Progressive enhancement only: .reveal elements start at opacity:0 in CSS,
