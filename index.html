@@ -699,6 +699,7 @@ function goLanding(){ hideAll(); document.getElementById('view-landing').style.d
 function startSurvey(){
   hideAll();
   survey = {topFeatures:[],addFeature:'',painPoint:'',infoSource:'',dailyContent:'',wouldUse:'',habits:{},level:'',faculty:'',department:'',wantsTest:false,contact:''};
+  aiInterest = '';
   currentStep = 1;
   document.getElementById('view-survey').style.display='block';
   renderStep();
@@ -942,6 +943,11 @@ function renderStep(){
       <label class="field-label">Would you use an app where students from your university connect, post, create communities, and discover what's happening around campus?</label>
       <div class="choice-row" id="wouldUse-row">
         ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" onclick="pickWouldUse('${o}')">${o}</div>`).join('')}
+      </div>
+      <label class="field-label">Would you use an AI assistant built into the app?</label>
+      <div class="field-sub"></div>
+      <div class="choice-row" id="aiInterest-row">
+        ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${aiInterest===o?'on':''}" onclick="pickAiInterest('${o}')">${o}</div>`).join('')}
       </div>
     `;
     ['f-pain','f-info','f-daily'].forEach(id=>{
@@ -1253,6 +1259,14 @@ function pickWouldUse(v){
   });
   updateNextButtonState();
 }
+function pickAiInterest(v){
+  // local-only — intentionally never written to `survey`, so it can
+  // never end up in the payload that submitSurvey() sends to Supabase.
+  aiInterest = v;
+  document.querySelectorAll('#aiInterest-row .choice-pill').forEach(p=>{
+    p.classList.toggle('on', p.textContent===v);
+  });
+}
 function toggleWantsTest(v){
   survey.wantsTest = v;
   document.getElementById('contact-wrap').style.display = v ? 'block' : 'none';
@@ -1371,6 +1385,7 @@ async function submitSurvey(){
 /* ================= ADMIN DASHBOARD ================= */
 let allResponses = [];
 let allSuggestions = [];
+let aiInterest = ''; // local-only, never sent to the backend
 
 async function loadAdminData(){
   const body = document.getElementById('admin-body');
