@@ -15,7 +15,7 @@
 <meta property="og:title" content="Campus Connect — Tell Us What You Want" />
 <meta property="og:description" content="A 2-minute, anonymous survey shaping the student app we're building next. Pin your picks to the board." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="https://campusconnectsurvey.vercel.app/og-image/og-image.png" />
+<meta property="og:image" content="https://campusconnectsurvey.vercel.app/og-image.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:type" content="image/png" />
@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Campus Connect — Tell Us What You Want" />
 <meta name="twitter:description" content="A 2-minute, anonymous survey shaping the student app we're building next." />
-<meta name="twitter:image" content="https://campusconnectsurvey.vercel.app/og-image/og-image.png" />
+<meta name="twitter:image" content="https://campusconnectsurvey.vercel.app/og-image.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,6 +82,122 @@
   .pin-dot{width:9px; height:9px; border-radius:50%; background:var(--stamp); box-shadow:0 0 0 3px rgba(193,67,46,0.18);}
   .admin-link{font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:0.55; text-decoration:none; border-bottom:1px dashed var(--ink);}
   .admin-link:hover{opacity:1;}
+  .lang-trigger-btn{
+    display:flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:0.3px;
+    border:1.5px solid var(--line); background:var(--card); color:var(--ink);
+    padding:8px 13px; border-radius:20px; transition:.15s ease;
+  }
+  .lang-trigger-btn:hover{border-color:var(--marker); color:var(--marker-dark);}
+  .lang-trigger-btn .lm-arrow{font-size:11px; opacity:0.7;}
+
+  /* ---------- language selection modal ---------- */
+  .lang-modal-overlay{
+    display:none; position:fixed; inset:0; z-index:200;
+    background:rgba(28,27,23,0); backdrop-filter:blur(0px);
+    align-items:center; justify-content:center; padding:20px;
+    transition:background .35s ease, backdrop-filter .35s ease;
+  }
+  .lang-modal-overlay.open{display:flex;}
+  .lang-modal-overlay.show{background:rgba(28,27,23,0.6); backdrop-filter:blur(3px);}
+  .lang-modal-card{
+    background:var(--card); border-radius:14px; padding:32px 26px 28px;
+    max-width:380px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.4);
+    text-align:center; position:relative;
+    opacity:0; transform:scale(0.85) translateY(18px);
+    transition:opacity .38s cubic-bezier(.22,1,.36,1), transform .38s cubic-bezier(.22,1,.36,1);
+  }
+  .lang-modal-overlay.show .lang-modal-card{opacity:1; transform:scale(1) translateY(0);}
+  .lang-modal-eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:1.5px;
+    color:var(--marker-dark); opacity:0.7; margin-bottom:6px;
+  }
+  .lang-modal-title{font-family:'Anton',sans-serif; letter-spacing:0.5px; font-size:22px; margin-bottom:22px;}
+  .lang-modal-options{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;}
+  .lang-modal-opt{
+    position:relative; overflow:hidden;
+    border:1.5px solid var(--line); border-radius:10px; padding:18px 10px 16px;
+    cursor:pointer; background:var(--paper);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    opacity:0; transform:translateY(14px) scale(0.94);
+    transition:border-color .15s ease, background .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .lang-modal-overlay.show .lang-modal-opt{
+    animation:lm-opt-in .4s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  .lang-modal-overlay.show .lang-modal-opt:nth-child(1){animation-delay:.08s;}
+  .lang-modal-overlay.show .lang-modal-opt:nth-child(2){animation-delay:.14s;}
+  .lang-modal-overlay.show .lang-modal-opt:nth-child(3){animation-delay:.20s;}
+  .lang-modal-overlay.show .lang-modal-opt:nth-child(4){animation-delay:.26s;}
+  @keyframes lm-opt-in{ to{ opacity:1; transform:translateY(0) scale(1); } }
+  .lang-modal-opt:hover{border-color:var(--marker); transform:translateY(-2px) scale(1.02);}
+  .lang-modal-opt:active{transform:scale(0.97);}
+  .lang-modal-opt.on{
+    border-color:var(--marker); background:var(--marker); box-shadow:0 6px 16px rgba(47,111,78,0.35);
+    animation:lm-opt-pop .32s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes lm-opt-pop{ 0%{transform:scale(1);} 45%{transform:scale(1.08);} 100%{transform:scale(1);} }
+  .lm-badge{
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:13px;
+    background:rgba(47,111,78,0.14); color:var(--marker-dark); border:1.5px solid rgba(47,111,78,0.3);
+    transition:.15s ease;
+  }
+  .lang-modal-opt.on .lm-badge{background:var(--card); color:var(--marker); border-color:var(--card);}
+  .lm-name{font-size:14px; font-weight:700; color:var(--ink); transition:.15s ease;}
+  .lang-modal-opt.on .lm-name{color:var(--card);}
+  .lm-check{
+    position:absolute; top:6px; right:6px; width:18px; height:18px; border-radius:50%;
+    background:var(--card); color:var(--marker); font-size:11px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:scale(0.4);
+    transition:opacity .2s ease, transform .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .lang-modal-opt.on .lm-check{opacity:1; transform:scale(1);}
+  .lang-modal-ok{
+    width:100%; margin-top:6px;
+    max-height:0; opacity:0; padding-top:0; padding-bottom:0; overflow:hidden;
+    transition:max-height .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, padding .3s ease, margin .3s ease;
+  }
+  .lang-modal-ok.show{max-height:60px; opacity:1; padding-top:12px; padding-bottom:12px; margin-top:14px;}
+  .lang-modal-status{padding:34px 0 30px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;}
+  .stamp-loader{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center;}
+  .stamp-loader .stamp-ripple{
+    position:absolute; width:34px; height:34px; border-radius:50%;
+    border:2.5px solid var(--marker); opacity:0;
+    animation:stamp-ripple 1.1s cubic-bezier(.2,.6,.4,1) infinite;
+  }
+  .stamp-loader .stamp-ripple.d2{animation-delay:.55s;}
+  .stamp-loader .stamp-mark{
+    position:relative; width:32px; height:32px; border-radius:7px;
+    background:var(--marker); color:var(--card);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:14px;
+    box-shadow:0 4px 10px rgba(47,111,78,0.35);
+    animation:stamp-drop 1.1s cubic-bezier(.34,1.56,.64,1) infinite;
+  }
+  @keyframes stamp-drop{
+    0%{ transform:translateY(-22px) rotate(-14deg) scale(0.85); opacity:0; }
+    28%{ opacity:1; }
+    46%{ transform:translateY(0) rotate(0deg) scale(1.12); opacity:1; }
+    58%{ transform:translateY(0) rotate(0deg) scale(0.94); }
+    70%{ transform:translateY(0) rotate(0deg) scale(1); }
+    100%{ transform:translateY(0) rotate(0deg) scale(1); opacity:1; }
+  }
+  @keyframes stamp-ripple{
+    0%{ transform:scale(0.4); opacity:0; }
+    46%{ opacity:0; }
+    55%{ opacity:0.55; }
+    100%{ transform:scale(1.5); opacity:0; }
+  }
+  .stamp-loader-label{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; opacity:0.55; text-transform:uppercase;}
+  .lang-modal-check{
+    width:56px; height:56px; border-radius:50%; background:var(--marker); color:var(--card);
+    font-size:28px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    animation:pop-check .4s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 8px 20px rgba(47,111,78,0.4);
+  }
+
 
   /* ---------- hero ---------- */
   .hero{padding:36px 0 20px;}
@@ -328,6 +444,29 @@
   .tsearch-option:first-child{border-top:none;}
   .tsearch-option:hover{background:rgba(47,111,78,0.08);}
   .tsearch-fallback{margin-top:8px; font-size:12.5px; color:rgba(28,27,23,0.65);}
+
+  .dept-disabled-note{
+    padding:12px 14px; border:1.5px solid var(--line); border-radius:8px;
+    background:rgba(28,27,23,0.04); color:rgba(28,27,23,0.5); font-size:13.5px;
+  }
+  .dept-tap-prompt{font-size:12.5px; color:rgba(28,27,23,0.6); margin-bottom:8px;}
+  .dept-pick-list{border:1.5px solid var(--line); border-radius:8px; overflow:hidden; max-height:280px; overflow-y:auto;}
+  .dept-pick-option{
+    padding:12px 14px; font-size:13.5px; cursor:pointer; border-top:1px dashed var(--line);
+    background:var(--card); transition:background .12s ease;
+  }
+  .dept-pick-option:first-child{border-top:none;}
+  .dept-pick-option:hover{background:rgba(47,111,78,0.08);}
+  .dept-chip{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    border:1.5px solid var(--marker); background:rgba(47,111,78,0.08); border-radius:8px;
+    padding:12px 14px;
+  }
+  .dept-chip-value{font-size:14px; font-weight:700;}
+  .dept-change-btn{
+    background:none; border:none; padding:0; color:var(--marker-dark); font-weight:700;
+    text-decoration:underline; cursor:pointer; font-size:12.5px; font-family:inherit; flex-shrink:0;
+  }
   .fallback-link{background:none; border:none; padding:0; color:var(--marker-dark); font-weight:700; text-decoration:underline; cursor:pointer; font-size:12.5px; font-family:inherit;}
   .suggestion-form{display:flex; gap:8px; margin-top:6px; align-items:center; flex-wrap:wrap;}
   .suggestion-input{flex:1; min-width:160px; padding:9px 11px; font-size:13px; border:1.5px solid var(--line); border-radius:6px; background:var(--card);}
@@ -489,8 +628,39 @@
 </head>
 <body>
 
+<div id="lang-modal-overlay" class="lang-modal-overlay">
+  <div class="lang-modal-card">
+    <div id="lang-modal-pick">
+      <div class="lang-modal-eyebrow">CAMPUS CONNECT</div>
+      <div class="lang-modal-title">Select Language</div>
+      <div class="lang-modal-options" id="lang-modal-options">
+        <div class="lang-modal-opt" data-lang="en"><span class="lm-badge">EN</span><span class="lm-name">English</span><span class="lm-check">✓</span></div>
+        <div class="lang-modal-opt" data-lang="ha"><span class="lm-badge">HA</span><span class="lm-name">Hausa</span><span class="lm-check">✓</span></div>
+        <div class="lang-modal-opt" data-lang="yo"><span class="lm-badge">YO</span><span class="lm-name">Yorùbá</span><span class="lm-check">✓</span></div>
+        <div class="lang-modal-opt" data-lang="ig"><span class="lm-badge">IG</span><span class="lm-name">Igbo</span><span class="lm-check">✓</span></div>
+      </div>
+      <button type="button" class="btn btn-primary lang-modal-ok" id="lang-modal-ok" onclick="confirmLangModal()">OK</button>
+    </div>
+    <div id="lang-modal-loading" class="lang-modal-status" style="display:none;">
+      <div class="stamp-loader">
+        <div class="stamp-ripple"></div>
+        <div class="stamp-ripple d2"></div>
+        <div class="stamp-mark">✓</div>
+      </div>
+      <div class="stamp-loader-label">Applying...</div>
+    </div>
+    <div id="lang-modal-done" class="lang-modal-status" style="display:none;">
+      <div class="lang-modal-check">✓</div>
+    </div>
+  </div>
+</div>
+
 <div class="topbar wrap">
   <div class="brand"><span class="pin-dot"></span> CAMPUS CONNECT · STUDENT INPUT</div>
+
+  <button type="button" class="lang-trigger-btn" id="lang-switch" onclick="openLangModal()">
+    Language <span class="lm-arrow">▾</span>
+  </button>
 </div>
 
 <!-- ================= LANDING ================= -->
@@ -501,36 +671,36 @@
         <div class="washi tl"></div>
         <div class="washi tr"></div>
         <div class="pushpin"></div>
-        <span class="eyebrow">Coming to North West University</span>
-        <h1>We're building something <span class="accent">for NWU students.</span></h1>
-        <p>A social platform made specifically for students — built around what actually happens on campus. Before we build it, we want to know: what do <em>you</em> want to see in it?</p>
-        <button class="tear-cta" onclick="startSurvey()">Take the 2-minute survey <span class="arrow">→</span></button>
-        <div class="time-note mono">~2 MINUTES · 100% ANONYMOUS</div>
+        <span class="eyebrow" data-i18n="heroEyebrow">Coming to North West University</span>
+        <h1><span data-i18n="heroHeadline1">We're building something</span> <span class="accent" data-i18n="heroHeadlineAccent">for NWU students.</span></h1>
+        <p data-i18n="heroPara">A social platform made specifically for students — built around what actually happens on campus. Before we build it, we want to know: what do <em>you</em> want to see in it?</p>
+        <button class="tear-cta" onclick="startSurvey()"><span data-i18n="ctaSurvey">Take the 2-minute survey</span> <span class="arrow">→</span></button>
+        <div class="time-note mono" data-i18n="timeNote">~2 MINUTES · 100% ANONYMOUS</div>
         <div class="counter-badge" id="response-counter" style="display:none;">
           <span class="counter-dot"></span><span id="response-counter-text"></span>
         </div>
       </div>
     </div>
     <div class="note-row">
-      <div class="sticky-note"><b>Tip</b>Only the last section (level, faculty, testing) is optional — everything else takes 2 minutes, tops.</div>
+      <div class="sticky-note"><b data-i18n="tipLabel">Tip</b><span data-i18n="tipText">Only the last section (level, faculty, testing) is optional — everything else takes 2 minutes, tops.</span></div>
     </div>
   </div>
 
   <div class="section wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">What we're planning</span>
-      <h2>Nine ideas pinned to the board so far</h2>
-      <p>Nothing here is final. Your answers in the survey decide what actually gets built first.</p>
+      <span class="eyebrow" data-i18n="planningEyebrow">What we're planning</span>
+      <h2 data-i18n="planningHeadline">Nine ideas pinned to the board so far</h2>
+      <p data-i18n="planningPara">Nothing here is final. Your answers in the survey decide what actually gets built first.</p>
     </div>
     <div class="feature-grid" id="feature-grid"></div>
   </div>
 
   <div class="bottom-cta wrap reveal">
-    <h2>Got 2 minutes? Help shape it.</h2>
-    <button class="tear-cta" onclick="startSurvey()">Take the survey <span class="arrow">→</span></button>
+    <h2 data-i18n="bottomCtaHeadline">Got 2 minutes? Help shape it.</h2>
+    <button class="tear-cta" onclick="startSurvey()"><span data-i18n="ctaSurveyShort">Take the survey</span> <span class="arrow">→</span></button>
   </div>
 
-  <footer>MADE BY STUDENTS, FOR STUDENTS<br>NOT AFFILIATED WITH SCHOOL ADMIN</footer>
+  <footer><span data-i18n="footerLine1">MADE BY STUDENTS, FOR STUDENTS</span><br><span data-i18n="footerLine2">NOT AFFILIATED WITH SCHOOL ADMIN</span></footer>
 </div>
 
 <!-- ================= SURVEY ================= -->
@@ -542,7 +712,7 @@
       <div class="step-label" id="step-label"></div>
       <div class="paper-page" id="step-content"></div>
       <div class="nav-row">
-        <button class="btn btn-ghost" id="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" data-i18n="back">← Back</button>
         <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Continue</button>
       </div>
     </div>
@@ -556,13 +726,13 @@
     <div class="thanks-card torn-edge" id="thanks-card">
       <div class="washi tl"></div>
       <div class="washi tr"></div>
-      <div class="stamp-badge" id="stamp-badge">RECEIVED</div>
-      <h1>You just helped shape this app.</h1>
-      <p>You're one of the first students weighing in on what this becomes. Once we've gone through everyone's answers, we'll build the first version around what came up most — and you'll be the first to hear about it.</p>
-      <button class="tear-cta" onclick="goLanding()">Back to start <span class="arrow">→</span></button>
+      <div class="stamp-badge" id="stamp-badge" data-i18n="stampBadge">RECEIVED</div>
+      <h1 data-i18n="thanksTitle">You just helped shape this app.</h1>
+      <p data-i18n="thanksPara">You're one of the first students weighing in on what this becomes. Once we've gone through everyone's answers, we'll build the first version around what came up most — and you'll be the first to hear about it.</p>
+      <button class="tear-cta" onclick="goLanding()"><span data-i18n="backToStart">Back to start</span> <span class="arrow">→</span></button>
     </div>
     <div class="note-row">
-      <div class="sticky-note alt"><b>Fun fact</b>The feature at the top of the board gets built first — your pick in step 1 carries real weight.</div>
+      <div class="sticky-note alt"><b data-i18n="funFactLabel">Fun fact</b><span data-i18n="funFactText">The feature at the top of the board gets built first — your pick in step 1 carries real weight.</span></div>
     </div>
   </div>
 </div>
@@ -669,6 +839,449 @@ const FACULTIES_DATA = {
 };
 function facultyNames(){ return Object.keys(FACULTIES_DATA); }
 function departmentsFor(faculty){ return FACULTIES_DATA[faculty] || []; }
+
+/* ================= TRANSLATIONS =================
+   Machine/AI-generated translations, not reviewed by a native
+   speaker of Hausa, Yoruba, or Igbo — have someone fluent check
+   these before relying on them for anything formal. Written
+   without tone marks / diacritics (Yoruba underdots, Igbo
+   subdots), matching how these languages are commonly typed
+   casually online in Nigeria — not full academic orthography. */
+const TRANSLATIONS = {
+  en: {
+    heroEyebrow: "Coming to North West University",
+    heroHeadline1: "We're building something",
+    heroHeadlineAccent: "for NWU students.",
+    heroPara: "A social platform made specifically for students — built around what actually happens on campus. Before we build it, we want to know: what do <em>you</em> want to see in it?",
+    ctaSurvey: "Take the 2-minute survey",
+    timeNote: "~2 MINUTES · 100% ANONYMOUS",
+    tipLabel: "Tip",
+    tipText: "Only the last section (level, faculty, testing) is optional — everything else takes 2 minutes, tops.",
+    planningEyebrow: "What we're planning",
+    planningHeadline: "Nine ideas pinned to the board so far",
+    planningPara: "Nothing here is final. Your answers in the survey decide what actually gets built first.",
+    bottomCtaHeadline: "Got 2 minutes? Help shape it.",
+    ctaSurveyShort: "Take the survey",
+    footerLine1: "MADE BY STUDENTS, FOR STUDENTS",
+    footerLine2: "NOT AFFILIATED WITH SCHOOL ADMIN",
+
+    feat_feed_name: "Social Feed", feat_feed_desc: "Posts, updates, campus chatter",
+    feat_profiles_name: "Student Profiles", feat_profiles_desc: "Your page on campus",
+    feat_communities_name: "Communities", feat_communities_desc: "Groups by interest or course",
+    feat_trending_name: "Trending Posts", feat_trending_desc: "What campus is talking about",
+    feat_events_name: "Campus Events", feat_events_desc: "Never miss what's on",
+    feat_marketplace_name: "Student Marketplace", feat_marketplace_desc: "Buy & sell with students",
+    feat_orgpages_name: "Dept/Org Pages", feat_orgpages_desc: "Official pages that post updates",
+    feat_notifications_name: "Notifications", feat_notifications_desc: "Stay in the loop",
+    feat_lostfound_name: "Lost & Found", feat_lostfound_desc: "Lost your ID? Post it here",
+
+    back: "← Back", continueBtn: "Continue", submitBtn: "Submit", submittingBtn: "Submitting...",
+    selectedSuffix: "selected", tapToSelect: "Tap to select...",
+
+    s1Title: "Pick the features you'd actually use",
+    s1Sub: "These are just what we're considering — your picks decide what gets built first.",
+
+    s2Title: "What would YOU add?",
+    s2Sub: "If you could add one feature to this app, what would it be?",
+    s2Placeholder: "e.g. a study-buddy finder, anonymous confessions...",
+
+    s3Title: "Tell us about actual campus life",
+    s3Sub: "This is the part that matters most — be honest.",
+    q_painPoint: "What's one thing about student life here you wish was easier?",
+    q_infoSource: "Where do you currently get campus information?",
+    q_dailyContent: "What kind of content would make you check this app every day?",
+    q_wouldUse: "Would you use an app where students from your university connect, post, create communities, and discover what's happening around campus?",
+    q_aiInterest: "Would you use an AI assistant built into the app?",
+    aiInterestNote: "Just for us — this one isn't saved anywhere.",
+    choice_Yes: "Yes", choice_Maybe: "Maybe", choice_No: "No",
+
+    s4Title: "Where do you currently do these?",
+    s4Sub: "Tap each one to reveal the options.",
+    habit_news: "Getting campus news & announcements",
+    habit_buysell: "Buying or selling stuff",
+    habit_events: "Finding out about events",
+    habit_hangout: "Hanging out / venting online",
+    habit_clubs: "Connecting with clubs & communities",
+    opt_WhatsAppGroups: "WhatsApp Groups", opt_Instagram: "Instagram", opt_TwitterX: "Twitter/X",
+    opt_Telegram: "Telegram", opt_PhysicalNoticeBoard: "Physical Notice Board",
+    opt_WordOfMouth: "Word of Mouth", opt_Nowhere: "I don't — nowhere", opt_Other: "Other",
+
+    s5Title: "Last thing — optional",
+    s5Sub: "Totally optional, helps us understand who answered what.",
+    levelLabel: "Level", facultyLabel: "Faculty", deptLabel: "Department",
+    facultyPlaceholder: "Start typing your faculty...",
+    deptPlaceholderActive: "Start typing your department...",
+    deptPlaceholderDisabled: "Select a faculty first",
+    deptTapPrompt: "Tap your department",
+    changeLabel: "Change",
+    cantFindFacultyPre: "Can't find your faculty? ",
+    cantFindDeptPre: "Can't find your department? ",
+    addItHere: "Add it here",
+    suggestionPlaceholderFaculty: "Type your faculty name",
+    suggestionPlaceholderDept: "Type your department name",
+    suggestionSubmit: "Submit", suggestionSending: "Sending...",
+    suggestionThanks: "Thanks — we'll review it. You can leave this field blank for now.",
+    suggestionErrEmpty: "Type a name first.",
+    suggestionErrFail: "Couldn't send — check your connection and try again.",
+    wantsTestLabel: "Yes, I'd like to be one of the first students to test the app",
+    contactLabel: "Your WhatsApp number",
+    contactHint: "Numbers only, 11 digits.",
+    level_Postgraduate: "Postgraduate", level_Other: "Other",
+
+    err1: "Pick at least 1 feature to continue.",
+    err2: "Please fill this in to continue.",
+    err3: "Please answer all questions to continue.",
+    err4: "Please select an option for each item.",
+    err5: "Enter a valid 11-digit WhatsApp number.",
+    submitFail: "Couldn't submit — check your connection and try again.",
+    liveOnlyFail: "This copy can't save responses here — it only works when opened through the live site, not a downloaded or separately hosted file.",
+
+    sectionLabel: "Section {n} of {t}",
+    percentComplete: "{p}% complete",
+
+    stampBadge: "RECEIVED",
+    thanksTitle: "You just helped shape this app.",
+    thanksPara: "You're one of the first students weighing in on what this becomes. Once we've gone through everyone's answers, we'll build the first version around what came up most — and you'll be the first to hear about it.",
+    backToStart: "Back to start",
+    funFactLabel: "Fun fact",
+    funFactText: "The feature at the top of the board gets built first — your pick in step 1 carries real weight."
+  },
+
+  ha: {
+    heroEyebrow: "Yana Zuwa Jami'ar North West",
+    heroHeadline1: "Muna gina wani abu",
+    heroHeadlineAccent: "domin ɗaliban NWU.",
+    heroPara: "Dandalin zamantakewa da aka kera musamman domin ɗalibai — an gina shi bisa abin da ke faruwa a harabar jami'a. Kafin mu gina shi, muna son sanin: me <em>kai</em> kake so ka gani a ciki?",
+    ctaSurvey: "Yi Binciken Mintuna 2",
+    timeNote: "~MINTI 2 · BOYE GABA DAYA",
+    tipLabel: "Shawara",
+    tipText: "Sashe na karshe kawai (matakin karatu, faculty, gwaji) ba dole ba ne — sauran duka mintuna 2 kacal ake bukata.",
+    planningEyebrow: "Abin da muke shirin yi",
+    planningHeadline: "Ra'ayoyi tara da aka jera a kan allo har yanzu",
+    planningPara: "Babu abin da ke nan na karshe. Amsoshinka a cikin binciken su ne za su tantance abin da za a fara ginawa.",
+    bottomCtaHeadline: "Kana da minti 2? Taimaka mana mu tsara shi.",
+    ctaSurveyShort: "Yi Binciken",
+    footerLine1: "ƊALIBAI NE SUKA YI SHI, DOMIN ƊALIBAI",
+    footerLine2: "BA SHI DA ALAKA DA HUKUMAR MAKARANTA",
+
+    feat_feed_name: "Shafin Zamantakewa", feat_feed_desc: "Sakonni, sabuntawa, hira a harabar",
+    feat_profiles_name: "Bayanan Dalibai", feat_profiles_desc: "Shafinka a harabar",
+    feat_communities_name: "Al'ummomi", feat_communities_desc: "Kungiyoyi bisa sha'awa ko fannin karatu",
+    feat_trending_name: "Fitattun Sakonni", feat_trending_desc: "Abin da harabar jami'a ke magana a kai",
+    feat_events_name: "Abubuwan Faruwa a Harabar", feat_events_desc: "Kada ka rasa abin da ke faruwa",
+    feat_marketplace_name: "Kasuwar Dalibai", feat_marketplace_desc: "Saya da sayarwa tare da dalibai",
+    feat_orgpages_name: "Shafukan Sashe/Kungiya", feat_orgpages_desc: "Shafukan hukuma da ke buga sabuntawa",
+    feat_notifications_name: "Sanarwa", feat_notifications_desc: "Kasance a sane da duk abin da ke faruwa",
+    feat_lostfound_name: "Bata & An Samu", feat_lostfound_desc: "Ka bata katin shaidarka? Sanya shi anan",
+
+    back: "← Koma", continueBtn: "Ci Gaba", submitBtn: "Aika", submittingBtn: "Ana Aikawa...",
+    selectedSuffix: "an zaɓa", tapToSelect: "Danna domin zaɓa...",
+
+    s1Title: "Zaɓi fasalulluka da za ka yi amfani da su a zahiri",
+    s1Sub: "Wadannan abubuwa ne kawai muke tunani a kai — zaɓinka zai tantance abin da za a fara ginawa.",
+
+    s2Title: "Me KAI za ka kara?",
+    s2Sub: "Idan za ka iya kara fasali daya a wannan app, menene zai kasance?",
+    s2Placeholder: "misali, na'urar neman abokin karatu, furuci ba a bayyana suna ba...",
+
+    s3Title: "Gaya mana game da rayuwar harabar jami'a ta gaske",
+    s3Sub: "Wannan shine bangaren da ya fi muhimmanci — ka kasance mai gaskiya.",
+    q_painPoint: "Wanne abu daya ne game da rayuwar dalibai a nan da kake fatan ya kasance mai sauki?",
+    q_infoSource: "A ina kake samun labaran harabar jami'a a yanzu?",
+    q_dailyContent: "Wane irin abun ciki zai sa ka bincika wannan app kowace rana?",
+    q_wouldUse: "Za ka yi amfani da app inda daliban jami'arka ke haduwa, buga sakonni, kirkiro al'ummomi, da gano abin da ke faruwa a harabar?",
+    q_aiInterest: "Za ka yi amfani da mataimakin AI da aka gina a cikin app?",
+    aiInterestNote: "Domin mu ne kawai — wannan ba a ajiye shi ko'ina.",
+    choice_Yes: "Ee", choice_Maybe: "Wataƙila", choice_No: "A'a",
+
+    s4Title: "A ina kake yin wadannan abubuwa a yanzu?",
+    s4Sub: "Danna kowanne domin ganin zabuka.",
+    habit_news: "Samun labaran harabar da sanarwa",
+    habit_buysell: "Saye ko sayar da kaya",
+    habit_events: "Gano abubuwan faruwa",
+    habit_hangout: "Hutawa / fadin damuwa a intanet",
+    habit_clubs: "Hadewa da kungiyoyi da al'ummomi",
+    opt_WhatsAppGroups: "WhatsApp Groups", opt_Instagram: "Instagram", opt_TwitterX: "Twitter/X",
+    opt_Telegram: "Telegram", opt_PhysicalNoticeBoard: "Allon Sanarwa na Zahiri",
+    opt_WordOfMouth: "Ta Baki", opt_Nowhere: "Ba na yi ba — babu inda", opt_Other: "Wani",
+
+    s5Title: "Abu na karshe — ba tilas ba",
+    s5Sub: "Ba tilas ba ne kwata-kwata, yana taimaka mana mu fahimci wanda ya amsa me.",
+    levelLabel: "Mataki", facultyLabel: "Faculty", deptLabel: "Sashe",
+    facultyPlaceholder: "Fara rubuta faculty naka...",
+    deptPlaceholderActive: "Fara rubuta sashenka...",
+    deptPlaceholderDisabled: "Fara zabi faculty",
+    deptTapPrompt: "Danna sashenka",
+    changeLabel: "Canza",
+    cantFindFacultyPre: "Ba ka samu faculty naka ba? ",
+    cantFindDeptPre: "Ba ka samu sashenka ba? ",
+    addItHere: "Kara shi anan",
+    suggestionPlaceholderFaculty: "Rubuta sunan faculty naka",
+    suggestionPlaceholderDept: "Rubuta sunan sashenka",
+    suggestionSubmit: "Aika", suggestionSending: "Ana Turawa...",
+    suggestionThanks: "Na gode — za mu duba shi. Za ka iya barin wannan fanko a yanzu.",
+    suggestionErrEmpty: "Rubuta suna tukuna.",
+    suggestionErrFail: "An kasa turawa — duba hanyar sadarwarka sannan ka sake gwadawa.",
+    wantsTestLabel: "Ee, ina son in kasance daya daga cikin dalibai na farko da za su gwada app din",
+    contactLabel: "Lambar WhatsApp naka",
+    contactHint: "Lambobi kawai, lambobi 11.",
+    level_Postgraduate: "Digiri na biyu", level_Other: "Wani",
+
+    err1: "Zaɓi akalla fasali 1 domin ci gaba.",
+    err2: "Da fatan za a cika wannan domin ci gaba.",
+    err3: "Da fatan za a amsa dukkan tambayoyi domin ci gaba.",
+    err4: "Da fatan za a zabi zabi ga kowane abu.",
+    err5: "Shigar da lambar WhatsApp mai inganci ta lambobi 11.",
+    submitFail: "An kasa aikawa — duba hanyar sadarwarka sannan ka sake gwadawa.",
+    liveOnlyFail: "Wannan kwafin ba zai iya adana amsoshi anan ba — yana aiki ne kawai idan an bude shi ta shafin da ke kai tsaye, ba fayil da aka sauke ba.",
+
+    sectionLabel: "Sashe {n} na {t}",
+    percentComplete: "{p}% an kammala",
+
+    stampBadge: "AN KARBA",
+    thanksTitle: "Ka taimaka wajen tsara wannan app.",
+    thanksPara: "Kai daya ne daga cikin dalibai na farko da suka bayar da ra'ayi kan abin da wannan zai zama. Da zarar mun duba amsoshin kowa, za mu gina sigar farko bisa abin da ya fi yawa — kuma za ka kasance na farko da zai ji labarin.",
+    backToStart: "Koma Farko",
+    funFactLabel: "Abin sha'awa",
+    funFactText: "Fasali da ke saman allon shi ake gina na farko — zaɓinka a mataki na 1 yana da muhimmanci sosai."
+  },
+
+  yo: {
+    heroEyebrow: "N bọ si Yunifasiti North West",
+    heroHeadline1: "A n kọ nkan kan",
+    heroHeadlineAccent: "fun awọn ọmọ ile-iwe NWU.",
+    heroPara: "Pẹpẹ awujọ ti a ṣe ni pataki fun awọn ọmọ ile-iwe — ti a kọ ni ayika ohun ti n ṣẹlẹ ni gidi ni ogba ile-iwe. Ki a to kọ ọ, a fẹ mọ: kini <em>iwọ</em> fẹ ri ninu rẹ?",
+    ctaSurvey: "Ṣe Ìwádìí Ìṣẹ́jú 2",
+    timeNote: "~ISEJU 2 · ASIRI 100%",
+    tipLabel: "Imọran",
+    tipText: "Apakan ikẹhin nikan (ipele, ẹka-ẹkọ, idanwo) ni aṣayan — ohun gbogbo yoku a gba iṣẹju 2 péré.",
+    planningEyebrow: "Ohun ti a n gbero",
+    planningHeadline: "Èrò mẹ́sàn-án tí a ti kọ sórí pátákó títí di ìsinsìnyí",
+    planningPara: "Ko si ohunkohun ninu eyi ti o ti muti pin. Awọn idahun rẹ ninu iwadi ni yoo pinnu ohun ti a maa kọkọ kọ.",
+    bottomCtaHeadline: "Ṣe o ni iṣẹju 2? Ran wa lọwọ lati ṣe apẹrẹ rẹ.",
+    ctaSurveyShort: "Ṣe Ìwádìí",
+    footerLine1: "AWỌN ỌMỌ ILE-IWE NI WỌN ṢE, FUN AWỌN ỌMỌ ILE-IWE",
+    footerLine2: "KO NI ASEPO PẸLU ISAKOSO ILE-IWE",
+
+    feat_feed_name: "Oju-iwe Awujọ", feat_feed_desc: "Awọn ifiweranṣẹ, imudojuiwọn, ọrọ ogba ile-iwe",
+    feat_profiles_name: "Profaili Akẹẹkọ", feat_profiles_desc: "Oju-iwe rẹ ni ogba ile-iwe",
+    feat_communities_name: "Awọn Agbegbe", feat_communities_desc: "Awọn ẹgbẹ nipa ifẹ tabi ẹkọ",
+    feat_trending_name: "Awọn Ifiweranṣẹ Gbajumo", feat_trending_desc: "Ohun ti ogba ile-iwe n sọ nipa rẹ",
+    feat_events_name: "Awọn Iṣẹlẹ Ogba Ile-iwe", feat_events_desc: "Maṣe padanu ohun ti n ṣẹlẹ",
+    feat_marketplace_name: "Ọjà Akẹẹkọ", feat_marketplace_desc: "Ra ki o si ta pẹlu awọn ọmọ ile-iwe",
+    feat_orgpages_name: "Oju-iwe Ẹka/Ẹgbẹ", feat_orgpages_desc: "Awọn oju-iwe osise ti n fiweranṣẹ imudojuiwọn",
+    feat_notifications_name: "Awọn Ifitonileti", feat_notifications_desc: "Duro ninu iyika alaye",
+    feat_lostfound_name: "Ti sọnu & Ti a rii", feat_lostfound_desc: "Ṣe o sọ ID rẹ nu? Fi ranṣẹ sibi",
+
+    back: "← Pada", continueBtn: "Tesiwaju", submitBtn: "Fi Silẹ", submittingBtn: "N Fi Silẹ...",
+    selectedSuffix: "ti yan", tapToSelect: "Te lati yan...",
+
+    s1Title: "Yan awọn ẹya ti iwọ yoo lo ni gidi",
+    s1Sub: "Awọn wọnyi ni ohun ti a n gbero lasan — awọn yiyan rẹ ni yoo pinnu ohun ti a maa kọkọ kọ.",
+
+    s2Title: "Kini IWỌ yoo fi kun?",
+    s2Sub: "Ti o ba le fi ẹya kan kun eto yii, kini yoo jẹ?",
+    s2Placeholder: "fun apẹẹrẹ, oluwadi ọrẹ ikẹkọ, ijẹwọ alailorukọ...",
+
+    s3Title: "Sọ fun wa nipa igbesi aye gidi ni ogba ile-iwe",
+    s3Sub: "Eyi ni apakan ti o ṣe pataki julọ — ṣe ododo.",
+    q_painPoint: "Kini ohun kan nipa igbesi aye akẹẹkọ nihin ti o fẹ ki o rọrun ju bayii lọ?",
+    q_infoSource: "Nibo ni o ti n gba alaye ogba ile-iwe lọwọlọwọ?",
+    q_dailyContent: "Iru akoonu wo ni yoo mu ki o ṣayẹwo eto yii lojoojumọ?",
+    q_wouldUse: "Ṣe iwọ yoo lo eto kan nibiti awọn akẹẹkọ ile-iwe giga rẹ ti n sopọ, fiweranṣẹ, ṣẹda agbegbe, ti wọn si n ṣawari ohun ti n ṣẹlẹ ni ayika ogba ile-iwe?",
+    q_aiInterest: "Ṣe iwọ yoo lo oluranlọwọ AI ti a kọ sinu eto naa?",
+    aiInterestNote: "Fun wa nikan ni — eyi ko ti wa ni fipamọ nibikibi.",
+    choice_Yes: "Bẹẹni", choice_Maybe: "Boya", choice_No: "Rara",
+
+    s4Title: "Nibo ni o ti n ṣe awọn wọnyi lọwọlọwọ?",
+    s4Sub: "Tẹ ọkọọkan lati fi awọn aṣayan han.",
+    habit_news: "Gbigba iroyin ati ikede ogba ile-iwe",
+    habit_buysell: "Rira tabi tita nnkan",
+    habit_events: "Wiwa alaye nipa awọn iṣẹlẹ",
+    habit_hangout: "Sisinmi / sisọrọ ọkan lori ayelujara",
+    habit_clubs: "Sisopọ pẹlu awọn ẹgbẹ ati agbegbe",
+    opt_WhatsAppGroups: "WhatsApp Groups", opt_Instagram: "Instagram", opt_TwitterX: "Twitter/X",
+    opt_Telegram: "Telegram", opt_PhysicalNoticeBoard: "Pátákó Ìkéde Gidi",
+    opt_WordOfMouth: "Ẹnu si Ẹnu", opt_Nowhere: "Emi ko — ko si ibikan", opt_Other: "Omiiran",
+
+    s5Title: "Ohun ikẹhin — aṣayan",
+    s5Sub: "Aṣayan patapata, o ran wa lọwọ lati mọ ẹni ti o dahun kini.",
+    levelLabel: "Ipele", facultyLabel: "Ẹka-Ẹkọ", deptLabel: "Ẹka",
+    facultyPlaceholder: "Bẹrẹ titẹ ẹka-ẹkọ rẹ...",
+    deptPlaceholderActive: "Bẹrẹ titẹ ẹka rẹ...",
+    deptPlaceholderDisabled: "Yan ẹka-ẹkọ kan ni akọkọ",
+    deptTapPrompt: "Te ẹka rẹ",
+    changeLabel: "Yipada",
+    cantFindFacultyPre: "O o ri ẹka-ẹkọ rẹ? ",
+    cantFindDeptPre: "O o ri ẹka rẹ? ",
+    addItHere: "Fi kun ibi",
+    suggestionPlaceholderFaculty: "Tẹ orukọ ẹka-ẹkọ rẹ",
+    suggestionPlaceholderDept: "Tẹ orukọ ẹka rẹ",
+    suggestionSubmit: "Fi Silẹ", suggestionSending: "N Firanṣẹ...",
+    suggestionThanks: "O ṣeun — a maa ṣe atunyẹwo rẹ. O le fi aaye yii silẹ ni ofo fun bayii.",
+    suggestionErrEmpty: "Tẹ orukọ kan ni akọkọ.",
+    suggestionErrFail: "A ko le firanṣẹ — ṣayẹwo asopọ rẹ ki o gbiyanju lẹẹkansi.",
+    wantsTestLabel: "Bẹẹni, mo fẹ jẹ ọkan ninu awọn akẹẹkọ akọkọ ti yoo dan eto naa wo",
+    contactLabel: "Nọmba WhatsApp rẹ",
+    contactHint: "Awọn nọmba nikan, oni nọmba 11.",
+    level_Postgraduate: "Ile-iwe Giga Keji", level_Other: "Omiiran",
+
+    err1: "Yan o kere ju ẹya 1 lati tẹsiwaju.",
+    err2: "Jọwọ kun eyi lati tẹsiwaju.",
+    err3: "Jọwọ dahun gbogbo awọn ibeere lati tẹsiwaju.",
+    err4: "Jọwọ yan aṣayan fun ohun kọọkan.",
+    err5: "Tẹ nọmba WhatsApp to tọ ti oni nọmba 11 sii.",
+    submitFail: "A ko le fi silẹ — ṣayẹwo asopọ rẹ ki o gbiyanju lẹẹkansi.",
+    liveOnlyFail: "Ẹda yii ko le fi awọn idahun pamọ nihin — o ṣiṣẹ nikan nigba ti a ba ṣi i lati ori aaye laaye, kii ṣe faili ti a gba silẹ.",
+
+    sectionLabel: "Apakan {n} ninu {t}",
+    percentComplete: "{p}% ti pari",
+
+    stampBadge: "A GBA A",
+    thanksTitle: "O ṣe iranlọwọ lati ṣe apẹrẹ eto yii.",
+    thanksPara: "Iwọ ni ọkan ninu awọn akẹẹkọ akọkọ ti wọn dahun lori ohun ti eyi yoo di. Ni kete ti a ba wo gbogbo awọn idahun, a maa kọ ẹya akọkọ ni ayika ohun ti o wọpọ julọ — iwọ yoo si jẹ akọkọ lati gbọ nipa rẹ.",
+    backToStart: "Pada si Ibẹrẹ",
+    funFactLabel: "Ododo Idunnu",
+    funFactText: "Ẹya ti o wa ni oke pátákó ni a maa kọkọ kọ — yiyan rẹ ni igbesẹ 1 ni iwuwo gidi."
+  },
+
+  ig: {
+    heroEyebrow: "Na-abịa na Mahadum North West",
+    heroHeadline1: "Anyị na-ewu ihe",
+    heroHeadlineAccent: "maka ụmụ akwụkwọ NWU.",
+    heroPara: "Ikpo okwu mmekọrịta e mepụtara kpọmkwem maka ụmụ akwụkwọ — e wuru ya gburugburu ihe na-eme n'ezie n'ogige mahadum. Tupu anyị ewuo ya, anyị chọrọ ịma: gịnị ka <em>gị</em> chọrọ ịhụ na ya?",
+    ctaSurvey: "Mee Nyocha Nkeji 2",
+    timeNote: "~NKEJI 2 · NZUZO 100%",
+    tipLabel: "Ndụmọdụ",
+    tipText: "Naanị ngalaba ikpeazụ (ọkwa, ngalaba akwụkwọ, nnwale) bụ nhọrọ — ihe ọzọ niile na-ewe nanị nkeji 2.",
+    planningEyebrow: "Ihe anyị na-akwado",
+    planningHeadline: "Echiche itoolu ka a manyere na bọọdụ ruo ugbu a",
+    planningPara: "Ọ dịghị ihe dị ebe a bụ nke ikpeazụ. Azịza gị na nyocha ga-ekpebi ihe a ga-ebu ụzọ wuo.",
+    bottomCtaHeadline: "Ị nwere nkeji 2? Nyere anyị aka ịkpụ ya.",
+    ctaSurveyShort: "Mee Nyocha",
+    footerLine1: "ỤMỤ AKWỤKWỌ RỤRỤ YA, MAKA ỤMỤ AKWỤKWỌ",
+    footerLine2: "ỌBỤGHỊ NKE NDỊ NCHỊKWA ỤLỌ AKWỤKWỌ",
+
+    feat_feed_name: "Ihu Mmekọrịta", feat_feed_desc: "Post, mmelite, mkparịta ụka n'ogige",
+    feat_profiles_name: "Profaịlụ Ụmụ Akwụkwọ", feat_profiles_desc: "Ibe gị n'ogige",
+    feat_communities_name: "Obodo", feat_communities_desc: "Otu dabere na mmasị ma ọ bụ ọzụzụ",
+    feat_trending_name: "Post Na-agba Ọsọ", feat_trending_desc: "Ihe ogige na-ekwu banyere ya",
+    feat_events_name: "Ihe Omume Ogige", feat_events_desc: "Ahapụla ihe na-eme",
+    feat_marketplace_name: "Ahịa Ụmụ Akwụkwọ", feat_marketplace_desc: "Zụọ ma ree ihe na ụmụ akwụkwọ ibe gị",
+    feat_orgpages_name: "Ibe Ngalaba/Otu", feat_orgpages_desc: "Ibe gọọmentị na-ebipụta mmelite",
+    feat_notifications_name: "Ọkwa", feat_notifications_desc: "Nọgide na-amata ihe na-eme",
+    feat_lostfound_name: "Furu & Achọtara", feat_lostfound_desc: "Ị tụfuru ID gị? Tinye ya ebe a",
+
+    back: "← Laghachi", continueBtn: "Gaa n'ihu", submitBtn: "Nyefee", submittingBtn: "Na-enyefe...",
+    selectedSuffix: "a họpụtara", tapToSelect: "Pịa iji họrọ...",
+
+    s1Title: "Họrọ atụmatụ ị ga-eji eme ihe n'ezie",
+    s1Sub: "Ndị a bụ naanị ihe anyị na-atụle — nhọrọ gị ga-ekpebi ihe a ga-ebu ụzọ wuo.",
+
+    s2Title: "Gịnị ka GỊ ga-agbakwunye?",
+    s2Sub: "Ọ bụrụ na ị ga-agbakwunye otu njirimara na ngwa a, gịnị ka ọ ga-abụ?",
+    s2Placeholder: "dịka, ihe na-achọ enyi mmụta, nkwupụta na-amaghị aha...",
+
+    s3Title: "Gwa anyị gbasara ndụ ogige mahadum n'ezie",
+    s3Sub: "Nke a bụ akụkụ kachasị mkpa — nwee eziokwu.",
+    q_painPoint: "Kedu otu ihe gbasara ndụ ụmụ akwụkwọ ebe a ị chọrọ ka ọ dịrị mfe?",
+    q_infoSource: "Olee ebe ị na-enweta ozi gbasara ogige mahadum ugbu a?",
+    q_dailyContent: "Kedu ụdị ọdịnaya ga-eme ka ị na-elele ngwa a kwa ụbọchị?",
+    q_wouldUse: "Ị ga-eji ngwa ebe ụmụ akwụkwọ mahadum gị na-ejikọta, na-ebipụta, na-emepụta obodo, na-achọpụta ihe na-eme gburugburu ogige?",
+    q_aiInterest: "Ị ga-eji onye enyemaka AI e wuru n'ime ngwa ahụ?",
+    aiInterestNote: "Naanị maka anyị — nke a echekwaghị n'ebe ọ bụla.",
+    choice_Yes: "Ee", choice_Maybe: "Ma eleghị anya", choice_No: "Mba",
+
+    s4Title: "Olee ebe ị na-eme ihe ndị a ugbu a?",
+    s4Sub: "Pịa nke ọ bụla iji hụ nhọrọ.",
+    habit_news: "Inweta akụkọ na ọkwa ogige",
+    habit_buysell: "Ịzụ ma ọ bụ ire ihe",
+    habit_events: "Ịchọpụta gbasara ihe omume",
+    habit_hangout: "Izu ike / ịkọpụta iwe n'ịntanetị",
+    habit_clubs: "Ijikọ na klọb na obodo",
+    opt_WhatsAppGroups: "WhatsApp Groups", opt_Instagram: "Instagram", opt_TwitterX: "Twitter/X",
+    opt_Telegram: "Telegram", opt_PhysicalNoticeBoard: "Bọọdụ Ọkwa Anụ Ahụ",
+    opt_WordOfMouth: "Site n'ọnụ", opt_Nowhere: "Anaghị m eme ya — ọ dịghị ebe", opt_Other: "Ọzọ",
+
+    s5Title: "Ihe ikpeazụ — nhọrọ",
+    s5Sub: "Ọ bụ naanị nhọrọ, ọ na-enyere anyị aka ịghọta onye zara gịnị.",
+    levelLabel: "Ọkwa", facultyLabel: "Ngalaba Akwụkwọ", deptLabel: "Ngalaba",
+    facultyPlaceholder: "Malite ide ngalaba akwụkwọ gị...",
+    deptPlaceholderActive: "Malite ide ngalaba gị...",
+    deptPlaceholderDisabled: "Họrọ ngalaba akwụkwọ mbụ",
+    deptTapPrompt: "Pịa ngalaba gị",
+    changeLabel: "Gbanwee",
+    cantFindFacultyPre: "Ị hụghị ngalaba akwụkwọ gị? ",
+    cantFindDeptPre: "Ị hụghị ngalaba gị? ",
+    addItHere: "Tinye ya ebe a",
+    suggestionPlaceholderFaculty: "Dee aha ngalaba akwụkwọ gị",
+    suggestionPlaceholderDept: "Dee aha ngalaba gị",
+    suggestionSubmit: "Nyefee", suggestionSending: "Na-eziga...",
+    suggestionThanks: "Daalụ — anyị ga-elele ya. Ị nwere ike ịhapụ ebe a efu ugbu a.",
+    suggestionErrEmpty: "Dee aha mbụ.",
+    suggestionErrFail: "Enweghị ike izipu — lelee njikọ gị ma nwaa ọzọ.",
+    wantsTestLabel: "Ee, ọ ga-amasị m ịbụ otu n'ime ụmụ akwụkwọ mbụ ga-anwale ngwa a",
+    contactLabel: "Nọmba WhatsApp gị",
+    contactHint: "Ọnụọgụ naanị, ọnụọgụ 11.",
+    level_Postgraduate: "Agụmakwụkwọ Elu", level_Other: "Ọzọ",
+
+    err1: "Họrọ opekata mpe otu njirimara iji gaa n'ihu.",
+    err2: "Biko dejupụta nke a iji gaa n'ihu.",
+    err3: "Biko zaa ajụjụ niile iji gaa n'ihu.",
+    err4: "Biko họrọ nhọrọ maka ihe ọ bụla.",
+    err5: "Tinye nọmba WhatsApp ziri ezi nke nwere ọnụọgụ 11.",
+    submitFail: "Enweghị ike nyefee — lelee njikọ gị ma nwaa ọzọ.",
+    liveOnlyFail: "Nnomi a enweghị ike ịchekwa azịza ebe a — ọ na-arụ ọrụ naanị mgbe e si na saịtị dị ndụ meghee ya, ọ bụghị faịlụ e budatara.",
+
+    sectionLabel: "Ngalaba {n} nke {t}",
+    percentComplete: "{p}% zuru ezu",
+
+    stampBadge: "ANATA YA",
+    thanksTitle: "Ị nyeere aka ịkpụ ngwa a.",
+    thanksPara: "Ị bụ otu n'ime ụmụ akwụkwọ mbụ zara ihe a ga-aghọ. Ozugbo anyị legidere azịza mmadụ niile anya, anyị ga-ewu ụdị mbụ dabere na ihe pụtakarịrị — ị ga-abụkwa onye mbụ nụrụ banyere ya.",
+    backToStart: "Laghachi na Mmalite",
+    funFactLabel: "Eziokwu na-atọ ụtọ",
+    funFactText: "Njirimara dị n'elu bọọdụ ka a na-ebu ụzọ wuo — nhọrọ gị na nzọụkwụ nke 1 nwere ezigbo mkpa."
+  }
+};
+
+const LANG_NAMES = { en: "English", ha: "Hausa", yo: "Yorùbá", ig: "Igbo" };
+
+let currentLang = 'en';
+let langModalPending = null;
+try{
+  const saved = localStorage.getItem('cc_lang');
+  if(saved && TRANSLATIONS[saved]) currentLang = saved;
+}catch(e){ /* localStorage blocked — default to English */ }
+
+function t(key){
+  const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  return (dict[key] !== undefined) ? dict[key] : (TRANSLATIONS.en[key] !== undefined ? TRANSLATIONS.en[key] : key);
+}
+
+function setLanguage(lang){
+  if(!TRANSLATIONS[lang]) return;
+  currentLang = lang;
+  try{ localStorage.setItem('cc_lang', lang); }catch(e){}
+
+  applyStaticTranslations();
+  try{ renderFeatureGrid(); }catch(e){}
+  // if mid-survey, re-render the current step in the new language
+  if(document.getElementById('view-survey') && document.getElementById('view-survey').style.display === 'block'){
+    try{ renderStep(); }catch(e){}
+  }
+}
+
+function applyStaticTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    el.innerHTML = t(key);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const key = el.getAttribute('data-i18n-placeholder');
+    el.setAttribute('placeholder', t(key));
+  });
+}
 
 /* ================= STATE ================= */
 let survey = {
@@ -790,20 +1403,63 @@ function renderFeatureGrid(){
   grid.innerHTML = FEATURES.map((f,i) => `
     <div class="card-pin reveal" style="transition-delay:${(i%3)*70}ms">
       <span class="tag-badge c${i%5}"><i data-lucide="${f.icon}"></i></span>
-      <h3>${f.name}</h3>
-      <p>${f.desc}</p>
+      <h3>${t('feat_'+f.id+'_name')}</h3>
+      <p>${t('feat_'+f.id+'_desc')}</p>
     </div>
   `).join('');
   if(window.lucide) lucide.createIcons();
   setupTilt();
+  setupScrollReveal();
 }
 try{ renderFeatureGrid(); }catch(e){ console.error('Feature grid failed to render:', e); }
+try{ applyStaticTranslations(); }catch(e){}
 
 // Hidden staff entry point — no visible link on the page.
 // Staff reach the login by going to: <your-site-url>/#staff-portal
 if(window.location.hash === '#staff-portal'){
   goAdmin();
+} else {
+  try{ openLangModal(); }catch(e){ console.error('Language modal failed to open:', e); }
 }
+
+function openLangModal(){
+  const overlay = document.getElementById('lang-modal-overlay');
+  if(!overlay) return;
+  langModalPending = null;
+  const okBtn = document.getElementById('lang-modal-ok');
+  okBtn.classList.remove('show');
+  document.querySelectorAll('.lang-modal-opt').forEach(opt=>{
+    opt.classList.remove('on');
+    opt.onclick = ()=>{
+      langModalPending = opt.dataset.lang;
+      document.querySelectorAll('.lang-modal-opt').forEach(o=>o.classList.toggle('on', o===opt));
+      okBtn.classList.add('show');
+    };
+  });
+  document.getElementById('lang-modal-pick').style.display = 'block';
+  document.getElementById('lang-modal-loading').style.display = 'none';
+  document.getElementById('lang-modal-done').style.display = 'none';
+  overlay.classList.add('open');
+  // next tick, so the browser registers the starting state before animating in
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add('show'); }); });
+}
+
+function confirmLangModal(){
+  if(!langModalPending) return;
+  document.getElementById('lang-modal-pick').style.display = 'none';
+  document.getElementById('lang-modal-loading').style.display = 'flex';
+  setTimeout(()=>{
+    setLanguage(langModalPending);
+    document.getElementById('lang-modal-loading').style.display = 'none';
+    document.getElementById('lang-modal-done').style.display = 'flex';
+    setTimeout(()=>{
+      const overlay = document.getElementById('lang-modal-overlay');
+      overlay.classList.remove('show');
+      setTimeout(()=>{ overlay.classList.remove('open'); }, 350);
+    }, 900);
+  }, 2000);
+}
+
 
 /* ---------- scroll reveal ----------
    Progressive enhancement only: .reveal elements start at opacity:0 in CSS,
@@ -837,10 +1493,11 @@ function setupScrollReveal(){
 }
 try{ setupScrollReveal(); }catch(e){}
 document.addEventListener('DOMContentLoaded', setupScrollReveal);
+window.addEventListener('load', setupScrollReveal);
 // Hard safety net — no matter what else went wrong above, nothing stays hidden.
 setTimeout(()=>{
   document.querySelectorAll('.reveal:not(.in-view)').forEach(el=>el.classList.add('in-view'));
-}, 1800);
+}, 600);
 
 
 /* ---------- tilt hover on feature cards ---------- */
@@ -894,7 +1551,9 @@ function renderProgress(){
     track.appendChild(seg);
   }
   const pct = Math.round(((currentStep-1)/TOTAL_STEPS)*100);
-  document.getElementById('step-label').innerHTML = `<span>Section ${currentStep} of ${TOTAL_STEPS}</span><span>${pct}% complete</span>`;
+  const sectionText = t('sectionLabel').replace('{n}', currentStep).replace('{t}', TOTAL_STEPS);
+  const pctText = t('percentComplete').replace('{p}', pct);
+  document.getElementById('step-label').innerHTML = `<span>${sectionText}</span><span>${pctText}</span>`;
 }
 
 function renderStep(){
@@ -902,19 +1561,20 @@ function renderStep(){
   const el = document.getElementById('step-content');
   document.getElementById('global-err').textContent='';
   document.getElementById('btn-back').style.visibility = currentStep===1 ? 'hidden' : 'visible';
-  document.getElementById('btn-next').textContent = currentStep===TOTAL_STEPS ? 'Submit' : 'Continue';
+  document.getElementById('btn-next').textContent = currentStep===TOTAL_STEPS ? t('submitBtn') : t('continueBtn');
+  document.getElementById('btn-back').textContent = t('back');
 
   if(currentStep===1){
     el.innerHTML = `
-      <div class="q-title">Pick the features you'd actually use</div>
-      <div class="q-sub">These are just what we're considering — your picks decide what gets built first.</div>
+      <div class="q-title">${t('s1Title')}</div>
+      <div class="q-sub">${t('s1Sub')}</div>
       <div class="pick-grid" id="pick-grid"></div>
-      <div class="pick-hint" id="pick-hint">0 selected</div>
+      <div class="pick-hint" id="pick-hint">0 ${t('selectedSuffix')}</div>
     `;
     const grid = document.getElementById('pick-grid');
     grid.innerHTML = FEATURES.map((f,i) => `
       <div class="pick-card ${survey.topFeatures.includes(f.id)?'on':''}" data-id="${f.id}" onclick="togglePick('${f.id}')">
-        <span class="pick-tag c${i%5}"><i data-lucide="${f.icon}"></i></span><span class="lbl">${f.name}</span>
+        <span class="pick-tag c${i%5}"><i data-lucide="${f.icon}"></i></span><span class="lbl">${t('feat_'+f.id+'_name')}</span>
         <span class="check-badge">✓</span>
       </div>
     `).join('');
@@ -924,31 +1584,30 @@ function renderStep(){
 
   else if(currentStep===2){
     el.innerHTML = `
-      <div class="q-title">What would YOU add?</div>
-      <div class="q-sub">If you could add one feature to this app, what would it be?</div>
-      <textarea id="f-add" placeholder="e.g. a study-buddy finder, anonymous confessions...">${survey.addFeature}</textarea>
+      <div class="q-title">${t('s2Title')}</div>
+      <div class="q-sub">${t('s2Sub')}</div>
+      <textarea id="f-add" placeholder="${t('s2Placeholder')}">${survey.addFeature}</textarea>
     `;
     document.getElementById('f-add').addEventListener('input', updateNextButtonState);
   }
 
   else if(currentStep===3){
     el.innerHTML = `
-      <div class="q-title">Tell us about actual campus life</div>
-      <div class="q-sub">This is the part that matters most — be honest.</div>
-      <label class="field-label">What's one thing about student life here you wish was easier?</label>
+      <div class="q-title">${t('s3Title')}</div>
+      <div class="q-sub">${t('s3Sub')}</div>
+      <label class="field-label">${t('q_painPoint')}</label>
       <textarea id="f-pain">${survey.painPoint}</textarea>
-      <label class="field-label">Where do you currently get campus information?</label>
+      <label class="field-label">${t('q_infoSource')}</label>
       <textarea id="f-info">${survey.infoSource}</textarea>
-      <label class="field-label">What kind of content would make you check this app every day?</label>
+      <label class="field-label">${t('q_dailyContent')}</label>
       <textarea id="f-daily">${survey.dailyContent}</textarea>
-      <label class="field-label">Would you use an app where students from your university connect, post, create communities, and discover what's happening around campus?</label>
+      <label class="field-label">${t('q_wouldUse')}</label>
       <div class="choice-row" id="wouldUse-row">
-        ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" onclick="pickWouldUse('${o}')">${o}</div>`).join('')}
+        ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${survey.wouldUse===o?'on':''}" data-value="${o}" onclick="pickWouldUse('${o}')">${t('choice_'+o)}</div>`).join('')}
       </div>
-      <label class="field-label">Would you use an AI assistant built into the app?</label>
-      <div class="field-sub"></div>
+      <label class="field-label">${t('q_aiInterest')}</label>
       <div class="choice-row" id="aiInterest-row">
-        ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${aiInterest===o?'on':''}" onclick="pickAiInterest('${o}')">${o}</div>`).join('')}
+        ${['Yes','Maybe','No'].map(o=>`<div class="choice-pill ${aiInterest===o?'on':''}" data-value="${o}" onclick="pickAiInterest('${o}')">${t('choice_'+o)}</div>`).join('')}
       </div>
     `;
     ['f-pain','f-info','f-daily'].forEach(id=>{
@@ -958,14 +1617,14 @@ function renderStep(){
 
   else if(currentStep===4){
     el.innerHTML = `
-      <div class="q-title">Where do you currently do these?</div>
-      <div class="q-sub">Tap each one to reveal the options.</div>
+      <div class="q-title">${t('s4Title')}</div>
+      <div class="q-sub">${t('s4Sub')}</div>
       <div id="habit-list"></div>
     `;
     const list = document.getElementById('habit-list');
     list.innerHTML = HABIT_ROWS.map(row => `
       <div class="habit-row">
-        <div class="hlabel">${row.label}</div>
+        <div class="hlabel">${t('habit_'+row.id)}</div>
         ${renderDropdown('habit:'+row.id, HABIT_OPTIONS, survey.habits[row.id])}
       </div>
     `).join('');
@@ -974,30 +1633,30 @@ function renderStep(){
 
   else if(currentStep===5){
     el.innerHTML = `
-      <div class="q-title">Last thing — optional</div>
-      <div class="q-sub">Totally optional, helps us understand who answered what.</div>
+      <div class="q-title">${t('s5Title')}</div>
+      <div class="q-sub">${t('s5Sub')}</div>
       <div class="field-row">
         <div>
-          <label class="field-label">Level</label>
+          <label class="field-label">${t('levelLabel')}</label>
           ${renderDropdown('level', LEVELS, survey.level)}
         </div>
         <div>
-          <label class="field-label">Faculty</label>
+          <label class="field-label">${t('facultyLabel')}</label>
           ${renderFacultyField()}
         </div>
       </div>
       <div id="dept-field-wrap" style="margin-bottom:18px;">
-        <label class="field-label">Department</label>
+        <label class="field-label">${t('deptLabel')}</label>
         ${renderDepartmentField()}
       </div>
       <label class="checkbox-line">
         <input type="checkbox" id="f-wants-test" ${survey.wantsTest?'checked':''} onchange="toggleWantsTest(this.checked)" />
-        <span>Yes, I'd like to be one of the first students to test the app</span>
+        <span>${t('wantsTestLabel')}</span>
       </label>
       <div id="contact-wrap" style="display:${survey.wantsTest?'block':'none'}; margin-top:12px;">
-        <label class="field-label">Your WhatsApp number</label>
+        <label class="field-label">${t('contactLabel')}</label>
         <input type="tel" id="f-contact" value="${survey.contact}" placeholder="e.g. 09012345678" maxlength="11" />
-        <div class="field-sub" id="contact-hint">Numbers only, 11 digits.</div>
+        <div class="field-sub" id="contact-hint">${t('contactHint')}</div>
       </div>
     `;
     initDropdowns();
@@ -1012,21 +1671,39 @@ function renderStep(){
 function renderFacultyField(){
   return `
     <div class="tsearch" id="faculty-tsearch">
-      <input type="text" id="f-faculty" class="tsearch-input" placeholder="Start typing your faculty..." autocomplete="off" value="${escapeHtml(survey.faculty)}" />
+      <input type="text" id="f-faculty" class="tsearch-input" placeholder="${t('facultyPlaceholder')}" autocomplete="off" value="${escapeHtml(survey.faculty)}" />
       <div class="tsearch-panel" id="faculty-panel"></div>
     </div>
     <div class="tsearch-fallback" id="faculty-fallback" style="display:none;"></div>
   `;
 }
 function renderDepartmentField(){
-  const disabled = !survey.faculty;
+  const faculty = survey.faculty;
+  if(!faculty){
+    return `<div class="dept-disabled-note">${t('deptPlaceholderDisabled')}</div>`;
+  }
+  if(survey.department){
+    return `
+      <div class="dept-chip">
+        <span class="dept-chip-value">${escapeHtml(survey.department)}</span>
+        <button type="button" class="dept-change-btn" onclick="reopenDepartmentPicker()">${t('changeLabel')}</button>
+      </div>
+    `;
+  }
+  const options = departmentsFor(faculty);
   return `
-    <div class="tsearch" id="dept-tsearch">
-      <input type="text" id="f-dept" class="tsearch-input" placeholder="${disabled?'Select a faculty first':'Start typing your department...'}" autocomplete="off" value="${escapeHtml(survey.department)}" ${disabled?'disabled':''} />
-      <div class="tsearch-panel" id="dept-panel"></div>
+    <div class="dept-tap-prompt">${t('deptTapPrompt')}</div>
+    <div class="dept-pick-list" id="dept-pick-list">
+      ${options.map(o=>`<div class="dept-pick-option" data-value="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('')}
     </div>
-    <div class="tsearch-fallback" id="dept-fallback" style="display:none;"></div>
+    <div class="tsearch-fallback" id="dept-fallback"></div>
   `;
+}
+
+function reopenDepartmentPicker(){
+  survey.department = '';
+  refreshDepartmentField();
+  updateNextButtonState();
 }
 
 function renderSuggestionList(panelEl, options, onPick){
@@ -1049,17 +1726,17 @@ function renderSuggestionList(panelEl, options, onPick){
 function openSuggestionForm(type, prefillValue, facultyContext, containerEl){
   containerEl.innerHTML = `
     <div class="suggestion-form">
-      <input type="text" class="suggestion-input" id="suggestion-input-${type}" value="${escapeHtml(prefillValue||'')}" placeholder="${type==='faculty' ? 'Type your faculty name' : 'Type your department name'}" />
-      <button type="button" class="btn-small suggestion-submit-btn" id="suggestion-submit-${type}">Submit</button>
+      <input type="text" class="suggestion-input" id="suggestion-input-${type}" value="${escapeHtml(prefillValue||'')}" placeholder="${type==='faculty' ? t('suggestionPlaceholderFaculty') : t('suggestionPlaceholderDept')}" />
+      <button type="button" class="btn-small suggestion-submit-btn" id="suggestion-submit-${type}">${t('suggestionSubmit')}</button>
     </div>
     <div class="err-note" id="suggestion-err-${type}"></div>
   `;
   document.getElementById(`suggestion-submit-${type}`).addEventListener('click', async ()=>{
     const val = document.getElementById(`suggestion-input-${type}`).value.trim();
     const errEl = document.getElementById(`suggestion-err-${type}`);
-    if(!val){ errEl.textContent = 'Type a name first.'; return; }
+    if(!val){ errEl.textContent = t('suggestionErrEmpty'); return; }
     const btn = document.getElementById(`suggestion-submit-${type}`);
-    btn.disabled = true; btn.textContent = 'Sending...';
+    btn.disabled = true; btn.textContent = t('suggestionSending');
     try{
       const res = await fetch(`${SUPABASE_URL}/rest/v1/list_suggestions`, {
         method:'POST',
@@ -1072,17 +1749,17 @@ function openSuggestionForm(type, prefillValue, facultyContext, containerEl){
         body: JSON.stringify({ kind: type, value: val, faculty_context: facultyContext || null })
       });
       if(!res.ok) throw new Error('failed');
-      containerEl.innerHTML = `<span class="suggestion-thanks">Thanks — we'll review it. You can leave this field blank for now.</span>`;
+      containerEl.innerHTML = `<span class="suggestion-thanks">${t('suggestionThanks')}</span>`;
     }catch(e){
-      errEl.textContent = "Couldn't send — check your connection and try again.";
-      btn.disabled=false; btn.textContent='Submit';
+      errEl.textContent = t('suggestionErrFail');
+      btn.disabled=false; btn.textContent=t('suggestionSubmit');
     }
   });
 }
 
 function initTypeaheads(){
   setupFacultyTypeahead();
-  setupDepartmentTypeahead();
+  setupDepartmentPicker();
 }
 
 function setupFacultyTypeahead(){
@@ -1094,7 +1771,7 @@ function setupFacultyTypeahead(){
   function hideFallback(){ fallback.style.display='none'; fallback.innerHTML=''; }
   function showFallback(query){
     fallback.style.display = 'block';
-    fallback.innerHTML = `<span>Can't find your faculty? </span><button type="button" class="fallback-link" id="faculty-add-link">Add it here</button>`;
+    fallback.innerHTML = `<span>${t('cantFindFacultyPre')}</span><button type="button" class="fallback-link" id="faculty-add-link">${t('addItHere')}</button>`;
     document.getElementById('faculty-add-link').addEventListener('click', ()=> openSuggestionForm('faculty', query, null, fallback));
   }
 
@@ -1132,47 +1809,42 @@ function setupFacultyTypeahead(){
 function refreshDepartmentField(){
   const wrap = document.getElementById('dept-field-wrap');
   if(!wrap) return;
-  wrap.innerHTML = `<label class="field-label">Department</label>${renderDepartmentField()}`;
-  setupDepartmentTypeahead();
+  wrap.innerHTML = `<label class="field-label">${t('deptLabel')}</label>${renderDepartmentField()}`;
+  setupDepartmentPicker();
 }
 
-function setupDepartmentTypeahead(){
-  const input = document.getElementById('f-dept');
-  const panel = document.getElementById('dept-panel');
+function setupDepartmentPicker(){
+  const list = document.getElementById('dept-pick-list');
+  if(!list) return; // either no faculty yet, or already showing the selected chip — nothing to wire up
+
   const fallback = document.getElementById('dept-fallback');
-  if(!input) return;
-
-  function hideFallback(){ fallback.style.display='none'; fallback.innerHTML=''; }
-  function showFallback(query){
-    fallback.style.display = 'block';
-    fallback.innerHTML = `<span>Can't find your department? </span><button type="button" class="fallback-link" id="dept-add-link">Add it here</button>`;
-    document.getElementById('dept-add-link').addEventListener('click', ()=> openSuggestionForm('department', query, survey.faculty, fallback));
-  }
-
-  input.addEventListener('input', ()=>{
-    survey.department = '';
-    const q = input.value.trim().toLowerCase();
-    hideFallback();
-    if(!q){ panel.classList.remove('open'); updateNextButtonState(); return; }
-    const options = departmentsFor(survey.faculty).filter(d=>d.toLowerCase().includes(q));
-    const found = renderSuggestionList(panel, options, (val)=>{
-      input.value = val;
-      survey.department = val;
-      panel.classList.remove('open');
-      hideFallback();
+  list.querySelectorAll('.dept-pick-option').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      survey.department = opt.dataset.value;
+      refreshDepartmentField();
       updateNextButtonState();
     });
-    if(!found) showFallback(input.value.trim());
-    updateNextButtonState();
   });
+  if(fallback){
+    fallback.innerHTML = `<span>${t('cantFindDeptPre')}</span><button type="button" class="fallback-link" id="dept-add-link">${t('addItHere')}</button>`;
+    document.getElementById('dept-add-link').addEventListener('click', ()=> openSuggestionForm('department', '', survey.faculty, fallback));
+  }
+}
 
-  input.addEventListener('blur', ()=>{
-    setTimeout(()=>{ panel.classList.remove('open'); }, 120);
-  });
+
+const OPTION_LABEL_KEYS = {
+  'WhatsApp Groups':'opt_WhatsAppGroups', 'Instagram':'opt_Instagram', 'Twitter/X':'opt_TwitterX',
+  'Telegram':'opt_Telegram', 'Physical Notice Board':'opt_PhysicalNoticeBoard',
+  'Word of Mouth':'opt_WordOfMouth', "I don't — nowhere":'opt_Nowhere', 'Other':'opt_Other',
+  'Postgraduate':'level_Postgraduate'
+};
+function optionLabel(canonicalValue){
+  const key = OPTION_LABEL_KEYS[canonicalValue];
+  return key ? t(key) : canonicalValue;
 }
 
 function renderDropdown(key, options, currentValue){
-  const display = currentValue ? escapeHtml(currentValue) : 'Tap to select...';
+  const display = currentValue ? escapeHtml(optionLabel(currentValue)) : t('tapToSelect');
   return `
     <div class="adrop" data-key="${key}">
       <button type="button" class="adrop-trigger">
@@ -1180,7 +1852,7 @@ function renderDropdown(key, options, currentValue){
         <span class="adrop-caret"></span>
       </button>
       <div class="adrop-panel">
-        ${options.map(o=>`<div class="adrop-option ${currentValue===o?'selected':''}" data-value="${escapeHtml(o)}">${escapeHtml(o)}<span class="opt-check">✓</span></div>`).join('')}
+        ${options.map(o=>`<div class="adrop-option ${currentValue===o?'selected':''}" data-value="${escapeHtml(o)}">${escapeHtml(optionLabel(o))}<span class="opt-check">✓</span></div>`).join('')}
       </div>
     </div>
   `;
@@ -1207,7 +1879,7 @@ function initDropdowns(){
       const trigger = wrap.querySelector('.adrop-trigger');
       const valueSpan = wrap.querySelector('.adrop-value');
       const val = opt.dataset.value;
-      valueSpan.textContent = val;
+      valueSpan.textContent = optionLabel(val);
       panel.querySelectorAll('.adrop-option').forEach(o=>o.classList.remove('selected'));
       opt.classList.add('selected');
       setDropdownValue(wrap.dataset.key, val);
@@ -1256,7 +1928,7 @@ function updatePickHint(){
 function pickWouldUse(v){
   survey.wouldUse = v;
   document.querySelectorAll('#wouldUse-row .choice-pill').forEach(p=>{
-    p.classList.toggle('on', p.textContent===v);
+    p.classList.toggle('on', p.dataset.value===v);
   });
   updateNextButtonState();
 }
@@ -1265,7 +1937,7 @@ function pickAiInterest(v){
   // never end up in the payload that submitSurvey() sends to Supabase.
   aiInterest = v;
   document.querySelectorAll('#aiInterest-row .choice-pill').forEach(p=>{
-    p.classList.toggle('on', p.textContent===v);
+    p.classList.toggle('on', p.dataset.value===v);
   });
 }
 function toggleWantsTest(v){
@@ -1327,11 +1999,11 @@ function collectStepInputs(){
 
 function validateStep(){
   if(isStepValid()) return null;
-  if(currentStep===1) return 'Pick at least 1 feature to continue.';
-  if(currentStep===2) return 'Please fill this in to continue.';
-  if(currentStep===3) return 'Please answer all questions to continue.';
-  if(currentStep===4) return 'Please select an option for each item.';
-  if(currentStep===5) return 'Enter a valid 11-digit WhatsApp number.';
+  if(currentStep===1) return t('err1');
+  if(currentStep===2) return t('err2');
+  if(currentStep===3) return t('err3');
+  if(currentStep===4) return t('err4');
+  if(currentStep===5) return t('err5');
   return null;
 }
 
@@ -1361,7 +2033,7 @@ async function nextStep(){
 async function submitSurvey(){
   const btn = document.getElementById('btn-next');
   btn.disabled = true;
-  btn.innerHTML = '<span class="btn-spinner"></span>Submitting...';
+  btn.innerHTML = '<span class="btn-spinner"></span>' + t('submittingBtn');
   try{
     const payload = {...survey, submittedAt: new Date().toISOString()};
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
@@ -1377,9 +2049,9 @@ async function submitSurvey(){
     if(!res.ok){ throw new Error('insert failed: ' + res.status); }
     goThanks();
   } catch(e){
-    document.getElementById('global-err').textContent = "Couldn't submit — check your connection and try again.";
+    document.getElementById('global-err').textContent = t('submitFail');
     btn.disabled = false;
-    btn.textContent = 'Submit';
+    btn.textContent = t('submitBtn');
   }
 }
 
