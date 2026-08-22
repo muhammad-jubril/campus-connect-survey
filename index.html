@@ -75,18 +75,22 @@
   /* ---------- layout shell ---------- */
   .wrap{max-width:920px; margin:0 auto; padding:0 20px;}
   .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 20px; max-width:920px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap;
+    padding:18px clamp(12px,4vw,20px); max-width:920px; margin:0 auto; gap:10px;
   }
-  .brand{display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px;}
-  .pin-dot{width:9px; height:9px; border-radius:50%; background:var(--stamp); box-shadow:0 0 0 3px rgba(193,67,46,0.18);}
+  .brand{
+    display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-weight:600;
+    font-size:clamp(9.5px,3vw,14px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    min-width:0;
+  }
+  .pin-dot{width:9px; height:9px; border-radius:50%; background:var(--stamp); box-shadow:0 0 0 3px rgba(193,67,46,0.18); flex-shrink:0;}
   .admin-link{font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:0.55; text-decoration:none; border-bottom:1px dashed var(--ink);}
   .admin-link:hover{opacity:1;}
   .lang-trigger-btn{
-    display:flex; align-items:center; gap:6px;
-    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:0.3px;
+    display:flex; align-items:center; gap:5px; flex-shrink:0; white-space:nowrap;
+    font-family:'IBM Plex Mono',monospace; font-size:clamp(10px,2.6vw,12px); font-weight:700; letter-spacing:0.3px;
     border:1.5px solid var(--line); background:var(--card); color:var(--ink);
-    padding:8px 13px; border-radius:20px; transition:.15s ease;
+    padding:7px clamp(9px,2.6vw,13px); border-radius:20px; transition:.15s ease;
   }
   .lang-trigger-btn:hover{border-color:var(--marker); color:var(--marker-dark);}
   .lang-trigger-btn .lm-arrow{font-size:11px; opacity:0.7;}
@@ -445,18 +449,6 @@
   .tsearch-option:hover{background:rgba(47,111,78,0.08);}
   .tsearch-fallback{margin-top:8px; font-size:12.5px; color:rgba(28,27,23,0.65);}
 
-  .dept-disabled-note{
-    padding:12px 14px; border:1.5px solid var(--line); border-radius:8px;
-    background:rgba(28,27,23,0.04); color:rgba(28,27,23,0.5); font-size:13.5px;
-  }
-  .dept-tap-prompt{font-size:12.5px; color:rgba(28,27,23,0.6); margin-bottom:8px;}
-  .dept-pick-list{border:1.5px solid var(--line); border-radius:8px; overflow:hidden; max-height:280px; overflow-y:auto;}
-  .dept-pick-option{
-    padding:12px 14px; font-size:13.5px; cursor:pointer; border-top:1px dashed var(--line);
-    background:var(--card); transition:background .12s ease;
-  }
-  .dept-pick-option:first-child{border-top:none;}
-  .dept-pick-option:hover{background:rgba(47,111,78,0.08);}
   .dept-chip{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
     border:1.5px solid var(--marker); background:rgba(47,111,78,0.08); border-radius:8px;
@@ -468,6 +460,30 @@
     text-decoration:underline; cursor:pointer; font-size:12.5px; font-family:inherit; flex-shrink:0;
   }
   .fallback-link{background:none; border:none; padding:0; color:var(--marker-dark); font-weight:700; text-decoration:underline; cursor:pointer; font-size:12.5px; font-family:inherit;}
+  .dept-modal-card{max-width:400px; text-align:left;}
+  .dept-modal-card .lang-modal-title{text-align:center; margin-bottom:6px;}
+  .dept-modal-faculty{
+    text-align:center; font-size:12.5px; color:rgba(28,27,23,0.55); margin-bottom:18px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .dept-modal-search{
+    width:100%; padding:12px 14px; font-size:14.5px; border:1.5px solid var(--line); border-radius:8px;
+    background:var(--paper); margin-bottom:14px; outline:none; transition:border-color .15s ease;
+  }
+  .dept-modal-search:focus{border-color:var(--marker);}
+  .dept-modal-list{max-height:260px; overflow-y:auto; border:1.5px solid var(--line); border-radius:8px; margin-bottom:10px;}
+  .dept-modal-option{
+    padding:13px 14px; font-size:14px; cursor:pointer; border-top:1px dashed var(--line);
+    background:var(--card); transition:background .12s ease;
+  }
+  .dept-modal-option:first-child{border-top:none;}
+  .dept-modal-option:hover{background:rgba(47,111,78,0.08);}
+  .dept-modal-option.selected{background:rgba(47,111,78,0.12); font-weight:700;}
+  .dept-modal-close{
+    width:100%; margin-top:6px; background:transparent; border:1.5px solid var(--line);
+    border-radius:8px; padding:11px; font-weight:700; font-size:13.5px; color:rgba(28,27,23,0.6);
+  }
+  .dept-modal-close:hover{border-color:var(--ink); color:var(--ink);}
   .suggestion-form{display:flex; gap:8px; margin-top:6px; align-items:center; flex-wrap:wrap;}
   .suggestion-input{flex:1; min-width:160px; padding:9px 11px; font-size:13px; border:1.5px solid var(--line); border-radius:6px; background:var(--card);}
   .suggestion-thanks{color:var(--marker-dark); font-weight:600;}
@@ -652,6 +668,17 @@
     <div id="lang-modal-done" class="lang-modal-status" style="display:none;">
       <div class="lang-modal-check">✓</div>
     </div>
+  </div>
+</div>
+
+<div id="dept-modal-overlay" class="lang-modal-overlay">
+  <div class="lang-modal-card dept-modal-card">
+    <div class="lang-modal-title">Select your department</div>
+    <div class="dept-modal-faculty" id="dept-modal-faculty"></div>
+    <input type="text" class="dept-modal-search" id="dept-modal-search" placeholder="Search department..." autocomplete="off" />
+    <div class="dept-modal-list" id="dept-modal-list"></div>
+    <div class="tsearch-fallback" id="dept-modal-fallback"></div>
+    <button type="button" class="dept-modal-close" onclick="closeDeptModal()">Close</button>
   </div>
 </div>
 
@@ -1645,10 +1672,7 @@ function renderStep(){
           ${renderFacultyField()}
         </div>
       </div>
-      <div id="dept-field-wrap" style="margin-bottom:18px;">
-        <label class="field-label">${t('deptLabel')}</label>
-        ${renderDepartmentField()}
-      </div>
+      <div id="dept-field-wrap"></div>
       <label class="checkbox-line">
         <input type="checkbox" id="f-wants-test" ${survey.wantsTest?'checked':''} onchange="toggleWantsTest(this.checked)" />
         <span>${t('wantsTestLabel')}</span>
@@ -1661,6 +1685,7 @@ function renderStep(){
     `;
     initDropdowns();
     initTypeaheads();
+    renderDeptSummary();
     const contactEl = document.getElementById('f-contact');
     if(contactEl) contactEl.addEventListener('input', updateNextButtonState);
   }
@@ -1677,33 +1702,69 @@ function renderFacultyField(){
     <div class="tsearch-fallback" id="faculty-fallback" style="display:none;"></div>
   `;
 }
-function renderDepartmentField(){
-  const faculty = survey.faculty;
-  if(!faculty){
-    return `<div class="dept-disabled-note">${t('deptPlaceholderDisabled')}</div>`;
-  }
+function renderDeptSummary(){
+  const wrap = document.getElementById('dept-field-wrap');
+  if(!wrap) return;
   if(survey.department){
-    return `
-      <div class="dept-chip">
-        <span class="dept-chip-value">${escapeHtml(survey.department)}</span>
-        <button type="button" class="dept-change-btn" onclick="reopenDepartmentPicker()">${t('changeLabel')}</button>
+    wrap.innerHTML = `
+      <div style="margin-bottom:18px;">
+        <label class="field-label">${t('deptLabel')}</label>
+        <div class="dept-chip">
+          <span class="dept-chip-value">${escapeHtml(survey.department)}</span>
+          <button type="button" class="dept-change-btn" onclick="openDeptModal()">${t('changeLabel')}</button>
+        </div>
       </div>
     `;
+  } else {
+    wrap.innerHTML = ''; // nothing shown at all until a department is actually picked via the modal
   }
-  const options = departmentsFor(faculty);
-  return `
-    <div class="dept-tap-prompt">${t('deptTapPrompt')}</div>
-    <div class="dept-pick-list" id="dept-pick-list">
-      ${options.map(o=>`<div class="dept-pick-option" data-value="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('')}
-    </div>
-    <div class="tsearch-fallback" id="dept-fallback"></div>
-  `;
 }
 
-function reopenDepartmentPicker(){
-  survey.department = '';
-  refreshDepartmentField();
-  updateNextButtonState();
+function openDeptModal(){
+  const overlay = document.getElementById('dept-modal-overlay');
+  if(!overlay || !survey.faculty) return;
+  document.getElementById('dept-modal-faculty').textContent = survey.faculty;
+  const search = document.getElementById('dept-modal-search');
+  search.value = '';
+  renderDeptModalList(departmentsFor(survey.faculty));
+  document.getElementById('dept-modal-fallback').innerHTML = '';
+  search.oninput = ()=>{
+    const q = search.value.trim().toLowerCase();
+    const all = departmentsFor(survey.faculty);
+    const filtered = q ? all.filter(d=>d.toLowerCase().includes(q)) : all;
+    renderDeptModalList(filtered);
+    const fb = document.getElementById('dept-modal-fallback');
+    if(q && filtered.length===0){
+      fb.innerHTML = `<span>${t('cantFindDeptPre')}</span><button type="button" class="fallback-link" id="dept-modal-add-link">${t('addItHere')}</button>`;
+      document.getElementById('dept-modal-add-link').addEventListener('click', ()=> openSuggestionForm('department', search.value.trim(), survey.faculty, fb));
+    } else {
+      fb.innerHTML = '';
+    }
+  };
+  overlay.classList.add('open');
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add('show'); }); });
+  setTimeout(()=>{ try{ search.focus(); }catch(e){} }, 320);
+}
+
+function closeDeptModal(){
+  const overlay = document.getElementById('dept-modal-overlay');
+  if(!overlay) return;
+  overlay.classList.remove('show');
+  setTimeout(()=>overlay.classList.remove('open'), 320);
+}
+
+function renderDeptModalList(options){
+  const list = document.getElementById('dept-modal-list');
+  if(!list) return;
+  list.innerHTML = options.map(o=>`<div class="dept-modal-option ${survey.department===o?'selected':''}" data-value="${escapeHtml(o)}">${escapeHtml(o)}</div>`).join('');
+  list.querySelectorAll('.dept-modal-option').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      survey.department = opt.dataset.value;
+      closeDeptModal();
+      renderDeptSummary();
+      updateNextButtonState();
+    });
+  });
 }
 
 function renderSuggestionList(panelEl, options, onPick){
@@ -1759,7 +1820,6 @@ function openSuggestionForm(type, prefillValue, facultyContext, containerEl){
 
 function initTypeaheads(){
   setupFacultyTypeahead();
-  setupDepartmentPicker();
 }
 
 function setupFacultyTypeahead(){
@@ -1782,7 +1842,7 @@ function setupFacultyTypeahead(){
     hideFallback();
     if(!q){
       panel.classList.remove('open');
-      refreshDepartmentField();
+      renderDeptSummary();
       updateNextButtonState();
       return;
     }
@@ -1793,42 +1853,18 @@ function setupFacultyTypeahead(){
       survey.department = '';
       panel.classList.remove('open');
       hideFallback();
-      refreshDepartmentField();
+      renderDeptSummary();
       updateNextButtonState();
+      openDeptModal(); // pops up immediately — no extra tap needed
     });
     if(!found) showFallback(input.value.trim());
-    refreshDepartmentField();
+    renderDeptSummary();
     updateNextButtonState();
   });
 
   input.addEventListener('blur', ()=>{
     setTimeout(()=>{ panel.classList.remove('open'); }, 120);
   });
-}
-
-function refreshDepartmentField(){
-  const wrap = document.getElementById('dept-field-wrap');
-  if(!wrap) return;
-  wrap.innerHTML = `<label class="field-label">${t('deptLabel')}</label>${renderDepartmentField()}`;
-  setupDepartmentPicker();
-}
-
-function setupDepartmentPicker(){
-  const list = document.getElementById('dept-pick-list');
-  if(!list) return; // either no faculty yet, or already showing the selected chip — nothing to wire up
-
-  const fallback = document.getElementById('dept-fallback');
-  list.querySelectorAll('.dept-pick-option').forEach(opt=>{
-    opt.addEventListener('click', ()=>{
-      survey.department = opt.dataset.value;
-      refreshDepartmentField();
-      updateNextButtonState();
-    });
-  });
-  if(fallback){
-    fallback.innerHTML = `<span>${t('cantFindDeptPre')}</span><button type="button" class="fallback-link" id="dept-add-link">${t('addItHere')}</button>`;
-    document.getElementById('dept-add-link').addEventListener('click', ()=> openSuggestionForm('department', '', survey.faculty, fallback));
-  }
 }
 
 
@@ -1860,6 +1896,8 @@ function renderDropdown(key, options, currentValue){
 
 function initDropdowns(){
   document.querySelectorAll('.adrop-trigger').forEach(btn=>{
+    if(btn.dataset.wired) return;
+    btn.dataset.wired = '1';
     btn.addEventListener('click', ()=>{
       const wrap = btn.closest('.adrop');
       const panel = wrap.querySelector('.adrop-panel');
@@ -1873,6 +1911,8 @@ function initDropdowns(){
     });
   });
   document.querySelectorAll('.adrop-option').forEach(opt=>{
+    if(opt.dataset.wired) return;
+    opt.dataset.wired = '1';
     opt.addEventListener('click', ()=>{
       const wrap = opt.closest('.adrop');
       const panel = wrap.querySelector('.adrop-panel');
@@ -1906,6 +1946,8 @@ function setDropdownValue(key, value){
     survey.habits[rowId] = value;
   } else if(key==='level'){
     survey.level = value;
+  } else if(key==='department'){
+    survey.department = value;
   }
   updateNextButtonState();
 }
@@ -2022,12 +2064,43 @@ async function nextStep(){
   document.getElementById('global-err').textContent = '';
 
   if(currentStep < TOTAL_STEPS){
+    await playStepTransition();
     currentStep++;
     renderStep();
     window.scrollTo(0,0);
   } else {
     await submitSurvey();
   }
+}
+
+function playStepTransition(){
+  return new Promise(resolve=>{
+    const content = document.getElementById('step-content');
+    const nextBtn = document.getElementById('btn-next');
+    const backBtn = document.getElementById('btn-back');
+    nextBtn.disabled = true;
+    backBtn.style.visibility = 'hidden';
+    content.innerHTML = `
+      <div class="lang-modal-status" style="padding:54px 0;">
+        <div class="stamp-loader">
+          <div class="stamp-ripple"></div>
+          <div class="stamp-ripple d2"></div>
+          <div class="stamp-mark">✓</div>
+        </div>
+      </div>
+    `;
+    setTimeout(()=>{
+      content.innerHTML = `
+        <div class="lang-modal-status" style="padding:54px 0;">
+          <div class="lang-modal-check">✓</div>
+        </div>
+      `;
+      setTimeout(()=>{
+        nextBtn.disabled = false;
+        resolve();
+      }, 500);
+    }, 1500);
+  });
 }
 
 async function submitSurvey(){
